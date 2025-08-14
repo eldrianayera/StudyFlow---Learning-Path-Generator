@@ -44,79 +44,124 @@ export default function RoadMap() {
     }
   };
 
+  const handleSave = () => {
+    try {
+    } catch (error) {}
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold text-center mb-6">
-        Generate Your Learning Roadmap
-      </h1>
+    //  Form Input section
+    <div className="bg-background text-foreground p-6 min-h-screen">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8 text-primary">
+          Build Your Learning Path
+        </h1>
 
-      <form onSubmit={handleSubmit} className="flex-center flex-col gap-3 mb-6">
-        <label htmlFor="topic"> What do you want to learn ? </label>
-        <input
-          type="text"
-          placeholder="Topic (e.g. React, Machine Learning...)"
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-          className="border p-2 rounded w-full"
-          aria-label="Topic"
-        />
-        <label htmlFor="level"> Select your expertise !</label>
-        <div>
-          {" "}
-          <select
-            name="level"
-            id="level"
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
-          >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Expert">Expert</option>
-          </select>
-        </div>
-        <label htmlFor="duration"> How long do you plan to learn ? </label>
-        <div>
-          {" "}
-          <input
-            type="range"
-            min={1}
-            max={12}
-            value={duration}
-            step={1}
-            name="duration"
-            onChange={(e) => setDuration(Number(e.target.value))}
-          />
-          <span> {duration} </span>
-          <span> Months </span>
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          disabled={loading}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-6 mb-8 p-6 rounded-lg bg-foreground/5"
         >
-          {loading ? "Generating..." : "Generate"}
-        </button>
-      </form>
-
-      <section>
-        {result && (
-          <div className="grid gap-4 md:grid-cols-2">
-            {result.map((week, key) => (
-              <article key={key} className="border rounded p-4 shadow-sm">
-                <h2 className="font-medium mb-2">{week.title}</h2>
-                <ul className="list-disc ml-5 text-sm text-gray-700">
-                  {week.tasks.map((task, key) => (
-                    <li key={key} className="mb-1">
-                      {task}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
+          <div className="space-y-2">
+            <label htmlFor="topic" className="font-medium">
+              What would you like to master?
+            </label>
+            <input
+              type="text"
+              placeholder="Enter a topic (e.g., Advanced JavaScript, Data Science...)"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              className="w-full p-3 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+              required
+            />
           </div>
-        )}
-      </section>
+
+          <div className="space-y-2">
+            <label htmlFor="level" className="font-medium">
+              Current skill level
+            </label>
+            <select
+              name="level"
+              id="level"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              className="w-full p-3 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="duration" className="font-medium">
+              Learning timeline:{" "}
+            </label>
+            <select
+              className="mx-5 px-2 h-10 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+              name="duration"
+              id="duration"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+            <span>Months</span>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 px-6 rounded-lg bg-primary text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? "Creating Your Path..." : "Generate Roadmap"}
+          </button>
+        </form>
+
+        {/* Result Section */}
+        <section>
+          {result ? (
+            <div className="grid gap-6">
+              {result.map((week, key) => (
+                <article
+                  key={key}
+                  className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors"
+                >
+                  <h2 className="font-bold text-lg mb-3 text-primary">
+                    {week.title}
+                  </h2>
+                  <ul className="space-y-2">
+                    {week.tasks.map((task, key) => (
+                      <li key={key} className="flex items-start">
+                        <span className="text-primary mr-2">•</span>
+                        <span>{task}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+
+              <button
+                type="submit"
+                className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+                disabled={loading}
+                onClick={handleSave}
+              >
+                {loading ? "Saving Your Path..." : "Save"}
+              </button>
+            </div>
+          ) : (
+            <div className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors text-center">
+              {" "}
+              Generate Roadmap to see it here !{" "}
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

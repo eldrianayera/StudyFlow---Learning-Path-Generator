@@ -8,14 +8,14 @@ const openai = new OpenAI({
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const topic = body.topic;
+  const { topic, level, duration } = body;
 
   if (!topic || typeof topic !== "string") {
     return NextResponse.json({ error: "Topic is required" }, { status: 400 });
   }
 
   try {
-    const prompt = `Create an 8-week learning roadmap for the topic "${topic}". Each week should have 3-4 tasks. 
+    const prompt = `Create an ${duration} months learning roadmap for the topic "${topic}" with current skill level : ${level} level. Each week should have 3-4 tasks. 
 Return ONLY a JSON array in this format:
 
 [
