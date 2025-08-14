@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { currentUser } from "@clerk/nextjs/server";
+import { useRouter } from "next/navigation";
 
 type Week = { title: string; tasks: string[] };
 
@@ -8,8 +10,10 @@ export default function RoadMap() {
   const [topic, setTopic] = useState<string>("");
   const [level, setLevel] = useState<string>("beginner");
   const [duration, setDuration] = useState<number>(3);
-  const [result, setResult] = useState<Week[] | null>(null);
+  const [roadmap, setRoadmap] = useState<Week[] | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const route = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +23,7 @@ export default function RoadMap() {
     }
 
     setLoading(true);
-    setResult(null);
+    setRoadmap(null);
 
     try {
       const res = await fetch("/api/generate-roadmap", {
@@ -32,22 +36,36 @@ export default function RoadMap() {
 
       if (!res.ok) {
         console.error(data.error);
-        setResult([]);
+        setRoadmap([]);
       } else {
-        setResult(data.roadmap);
+        setRoadmap(data.roadmap);
       }
     } catch (err) {
       console.error(err);
-      setResult([]);
+      setRoadmap([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSave = () => {
+  async function handleSave() {
+    console.log("Saving..");
+    console.log(roadmap);
+
     try {
-    } catch (error) {}
-  };
+      await fetch("/api/roadmap", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roadmap }),
+      });
+    } catch (error) {
+      return console.error("Fail to Save Roadmap");
+    }
+
+    route.push("/");
+  }
 
   return (
     //  Form Input section
@@ -124,9 +142,9 @@ export default function RoadMap() {
 
         {/* Result Section */}
         <section>
-          {result ? (
+          {roadmap ? (
             <div className="grid gap-6">
-              {result.map((week, key) => (
+              {roadmap.map((week, key) => (
                 <article
                   key={key}
                   className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors"
@@ -146,9 +164,7 @@ export default function RoadMap() {
               ))}
 
               <button
-                type="submit"
                 className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
-                disabled={loading}
                 onClick={handleSave}
               >
                 {loading ? "Saving Your Path..." : "Save"}

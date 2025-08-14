@@ -33,12 +33,19 @@ Return ONLY a JSON array in this format:
 Do NOT include any extra text, code blocks, backticks, explanations, or markdown. Only return the JSON array. The "title" must start with "Week N: ..." and "tasks" must be an array of strings.`;
 
     const completion = await openai.chat.completions.create({
-      model: "openai/gpt-oss-20b:free",
+      model: "mistralai/devstral-small",
       messages: [{ role: "user", content: prompt }],
       temperature: 0,
     });
 
-    const responseText = completion.choices[0]?.message?.content?.trim();
+    let responseText;
+
+    try {
+      console.log(completion);
+      responseText = completion.choices[0]?.message?.content?.trim();
+    } catch (error) {
+      console.error(error);
+    }
 
     if (!responseText) {
       return NextResponse.json(
