@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReactQueryClientProvider from "@/components/react-query-client-provider";
+import Navbar from "@/components/Navbar";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-  title: "LearnBuddy",
+  title: "StudyFlow",
   description: "your friendly study companion",
 };
 
@@ -13,12 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <ReactQueryClientProvider>
-          <main>{children}</main>
-        </ReactQueryClientProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <ReactQueryClientProvider>
+        <html lang="en">
+          <body>
+            <Navbar />
+            <main>{children}</main>
+          </body>
+        </html>
+      </ReactQueryClientProvider>
+    </ClerkProvider>
   );
 }
