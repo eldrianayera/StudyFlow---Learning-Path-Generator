@@ -5,7 +5,9 @@ import { useState } from "react";
 type Week = { title: string; tasks: string[] };
 
 export default function RoadMap() {
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState<string>("");
+  const [level, setLevel] = useState<string>("beginner");
+  const [duration, setDuration] = useState<number>(3);
   const [result, setResult] = useState<Week[] | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +23,9 @@ export default function RoadMap() {
 
     try {
       const res = await fetch("/api/generate-roadmap", {
-        method: "POST", // fixed typo
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic }), // send as object
+        body: JSON.stringify({ topic, level, duration }),
       });
 
       const data = await res.json();
@@ -32,7 +34,7 @@ export default function RoadMap() {
         console.error(data.error);
         setResult([]);
       } else {
-        setResult(data.roadmap); // extract roadmap array
+        setResult(data.roadmap);
       }
     } catch (err) {
       console.error(err);
@@ -48,10 +50,8 @@ export default function RoadMap() {
         Generate Your Learning Roadmap
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row gap-3 mb-6"
-      >
+      <form onSubmit={handleSubmit} className="flex-center flex-col gap-3 mb-6">
+        <label htmlFor="topic"> What do you want to learn ? </label>
         <input
           type="text"
           placeholder="Topic (e.g. React, Machine Learning...)"
@@ -60,6 +60,36 @@ export default function RoadMap() {
           className="border p-2 rounded w-full"
           aria-label="Topic"
         />
+        <label htmlFor="level"> Select your expertise !</label>
+        <div>
+          {" "}
+          <select
+            name="level"
+            id="level"
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+          >
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Expert">Expert</option>
+          </select>
+        </div>
+        <label htmlFor="duration"> How long do you plan to learn ? </label>
+        <div>
+          {" "}
+          <input
+            type="range"
+            min={1}
+            max={12}
+            value={duration}
+            step={1}
+            name="duration"
+            onChange={(e) => setDuration(Number(e.target.value))}
+          />
+          <span> {duration} </span>
+          <span> Months </span>
+        </div>
+
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded"
