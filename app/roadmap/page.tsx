@@ -20,81 +20,23 @@ export default function RoadMap() {
     setResult(null);
 
     try {
-      // Simulated response — replace with your API call
-      const fakeRoadmap: Week[] = [
-        {
-          title: "Week 1: Understand Basics",
-          tasks: [
-            "Read introductory articles about the topic",
-            "Watch beginner tutorials",
-            "Take notes on key concepts",
-          ],
-        },
-        {
-          title: "Week 2: Learn Core Concepts",
-          tasks: [
-            "Understand the main principles and theories",
-            "Watch focused video lessons",
-            "Try a few simple exercises",
-          ],
-        },
-        {
-          title: "Week 3: Practice Exercises",
-          tasks: [
-            "Solve beginner exercises",
-            "Ask questions in a community",
-            "Review mistakes and retry",
-          ],
-        },
-        {
-          title: "Week 4: Apply Knowledge",
-          tasks: [
-            "Build a small project",
-            "Write a short summary of your process",
-            "Share for feedback",
-          ],
-        },
-        {
-          title: "Week 5: Deepen Understanding",
-          tasks: [
-            "Read advanced articles or papers",
-            "Add new features to your project",
-            "Organize your notes",
-            "Teach a concept to someone",
-          ],
-        },
-        {
-          title: "Week 6: Review & Test",
-          tasks: [
-            "Take practice tests or quizzes",
-            "Focus on weak areas",
-            "Redo challenging exercises",
-          ],
-        },
-        {
-          title: "Week 7: Real-World Application",
-          tasks: [
-            "Solve real case studies",
-            "Collaborate on a mini project",
-            "Apply knowledge to a personal problem",
-          ],
-        },
-        {
-          title: "Week 8: Reflection & Next Steps",
-          tasks: [
-            "Write a comprehensive summary",
-            "Plan next topics",
-            "Set a schedule for continued learning",
-          ],
-        },
-      ];
+      const res = await fetch("/api/generate-roadmap", {
+        method: "POST", // fixed typo
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic }), // send as object
+      });
 
-      // simulate delay
-      await new Promise((r) => setTimeout(r, 600));
-      setResult(fakeRoadmap);
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        setResult([]);
+      } else {
+        setResult(data.roadmap); // extract roadmap array
+      }
     } catch (err) {
       console.error(err);
-      setResult(null);
+      setResult([]);
     } finally {
       setLoading(false);
     }
@@ -130,12 +72,12 @@ export default function RoadMap() {
       <section>
         {result && (
           <div className="grid gap-4 md:grid-cols-2">
-            {result.map((week, i) => (
-              <article key={i} className="border rounded p-4 shadow-sm">
+            {result.map((week, key) => (
+              <article key={key} className="border rounded p-4 shadow-sm">
                 <h2 className="font-medium mb-2">{week.title}</h2>
                 <ul className="list-disc ml-5 text-sm text-gray-700">
-                  {week.tasks.map((task, j) => (
-                    <li key={j} className="mb-1">
+                  {week.tasks.map((task, key) => (
+                    <li key={key} className="mb-1">
                       {task}
                     </li>
                   ))}
