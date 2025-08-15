@@ -153,7 +153,7 @@ export default function RoadMap() {
             className="w-full py-3 px-6 rounded-lg bg-primary text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? "Creating Your Path..." : "Generate Roadmap"}
+            {loading ? "Creating Your Path..." : "Generate Learning Path"}
           </button>
         </form>
 
@@ -161,6 +161,12 @@ export default function RoadMap() {
         <section>
           {roadmap ? (
             <div className="grid gap-6">
+              <button
+                className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+                onClick={handleConfirm}
+              >
+                {loading ? "Saving Your Path..." : "Save"}
+              </button>
               {roadmap.map((week, key) => (
                 <article
                   key={key}
@@ -179,13 +185,6 @@ export default function RoadMap() {
                   </ul>
                 </article>
               ))}
-
-              <button
-                className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
-                onClick={handleConfirm}
-              >
-                {loading ? "Saving Your Path..." : "Save"}
-              </button>
             </div>
           ) : (
             <div className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors text-center">
