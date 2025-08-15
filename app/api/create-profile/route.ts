@@ -43,8 +43,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log("Created new user in db", email);
-
     return NextResponse.json(
       { message: "User successfully created !" },
       { status: 201 }

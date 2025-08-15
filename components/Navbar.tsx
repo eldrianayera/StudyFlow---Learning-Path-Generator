@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="flex-evenly">
+    <div className="flex-evenly mb-16">
       <Link href="/">
         <div>StudyFlow</div>
       </Link>
@@ -11,6 +11,8 @@ export default function Navbar() {
       {/* Signed In */}
       <SignedIn>
         <UserButton />
+        <Link href="/dashboard"> My Learning </Link>
+        <Link href="/roadmap"> Generate Roadmap </Link>
         <SignOutButton> Sign Out </SignOutButton>
       </SignedIn>
 
@@ -20,6 +22,8 @@ export default function Navbar() {
         <Link href="/sign-up">
           <button> Sign Up </button>
         </Link>
+        <Link href="/sign-up"> My Learning </Link>
+        <Link href="/sign-up"> Generate Roadmap </Link>
       </SignedOut>
     </div>
   );

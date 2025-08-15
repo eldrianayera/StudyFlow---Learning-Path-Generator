@@ -19,7 +19,6 @@ async function createProfileRequest() {
   });
 
   const data = await res.json();
-  console.log(data);
 
   return data as ApiResponse;
 }
@@ -30,10 +29,10 @@ export default function CreateProfile() {
   const { mutate, isPending } = useMutation<ApiResponse>({
     mutationFn: createProfileRequest,
     onSuccess: () => {
-      router.push("/roadmap");
+      router.push("/dashboard");
     },
     onError: (error) => {
-      console.log(error);
+      console.log("Failed to sign up");
       router.push("/sign-up");
     },
   });

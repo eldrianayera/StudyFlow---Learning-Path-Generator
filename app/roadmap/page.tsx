@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { currentUser } from "@clerk/nextjs/server";
 import { useRouter } from "next/navigation";
 
-type Week = { title: string; tasks: string[] };
+export type Week = { title: string; tasks: string[] };
 
 export default function RoadMap() {
   const [topic, setTopic] = useState<string>("");
@@ -49,9 +48,6 @@ export default function RoadMap() {
   };
 
   async function handleSave() {
-    console.log("Saving..");
-    console.log(roadmap);
-
     try {
       await fetch("/api/roadmap", {
         method: "POST",
@@ -64,7 +60,7 @@ export default function RoadMap() {
       return console.error("Fail to Save Roadmap");
     }
 
-    route.push("/");
+    route.push("/dashboard");
   }
 
   return (

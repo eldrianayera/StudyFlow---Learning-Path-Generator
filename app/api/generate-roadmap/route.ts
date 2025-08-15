@@ -41,7 +41,6 @@ Do NOT include any extra text, code blocks, backticks, explanations, or markdown
     let responseText;
 
     try {
-      console.log(completion);
       responseText = completion.choices[0]?.message?.content?.trim();
     } catch (error) {
       console.error(error);
