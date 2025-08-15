@@ -28,6 +28,7 @@ model Roadmap {
   id String @id @default(uuid())
   userClerkId String 
   roadMap Json 
+  title String
 
   user User @relation(fields: [userClerkId], references: [clerkId], onDelete: Cascade)
 }

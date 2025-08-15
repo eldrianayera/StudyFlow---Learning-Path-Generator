@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { Week } from "../roadmap/page";
 
-interface roadmapAndId {
+export type roadmapAndId = {
   roadmap: Week[];
   id: string;
-}
+};
 
 export default function Dashboard() {
   const [roadmaps, setRoadmaps] = useState<roadmapAndId[] | null>(null);
@@ -49,7 +49,7 @@ export default function Dashboard() {
       {roadmaps ? (
         roadmaps.map((item) => {
           return (
-            <a href={`dashboard/:${item.id}`} key={item.id}>
+            <a href={`dashboard/${item.id}`} key={item.id}>
               <h2>{item.roadmap[0].title}</h2>
               <div>
                 {item.roadmap[0].tasks.map((task, key) => {
