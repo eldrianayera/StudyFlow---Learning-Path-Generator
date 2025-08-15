@@ -44,6 +44,8 @@ export default function Dashboard() {
           setRoadmaps(null);
           return;
         }
+        console.log(responseText.data);
+
         setRoadmaps(responseText.data);
 
         toast.success("Roadmaps loaded!", { id: toastId });
@@ -80,19 +82,18 @@ export default function Dashboard() {
                     </h2>
 
                     <div className="flex flex-wrap gap-2">
-                      {item.roadmap.slice(0, 4).map((week, index) => (
+                      {item.roadmap.map((week, index) => (
                         <span
                           key={index}
-                          className="bg-foreground/10 text-foreground px-3 py-1 rounded-full text-sm"
+                          className={`px-3 py-1 rounded-full text-sm  ${
+                            week.isCompleted
+                              ? "bg-green-600 text-background"
+                              : "bg-foreground/10 text-foreground"
+                          } `}
                         >
                           Week {index + 1}
                         </span>
                       ))}
-                      {item.roadmap.length > 4 && (
-                        <span className="bg-foreground/10 text-foreground px-3 py-1 rounded-full text-sm">
-                          +{item.roadmap.length - 4} more
-                        </span>
-                      )}
                     </div>
                   </div>
                 </a>

@@ -29,6 +29,7 @@ model Roadmap {
   userClerkId String 
   roadmap Json 
   title String
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userClerkId], references: [clerkId], onDelete: Cascade)
 }

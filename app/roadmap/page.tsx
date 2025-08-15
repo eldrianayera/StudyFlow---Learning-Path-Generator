@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { log } from "console";
 
-export type Week = { title: string; tasks: string[] };
+export type Week = { title: string; tasks: string[]; isCompleted: boolean };
 
 export default function RoadMap() {
   const [topic, setTopic] = useState<string>("");
@@ -44,7 +45,12 @@ export default function RoadMap() {
         console.error(data.error);
         setRoadmap([]);
       } else {
-        setRoadmap(data.roadmap);
+        const addedIsCompleted = data.roadmap.map((week: Week) => ({
+          ...week,
+          isCompleted: false,
+        }));
+
+        setRoadmap(addedIsCompleted);
       }
     } catch (err) {
       toast.error("Failed to generate learning path !", { id: generatingId });
@@ -79,7 +85,7 @@ export default function RoadMap() {
       const response = await res.json();
       const id = response.id;
 
-      toast.success("Learning Path generated !", { id: savingId });
+      toast.success("Learning Path Saved !", { id: savingId });
 
       route.push(`/dashboard/${id}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -89,19 +95,25 @@ export default function RoadMap() {
   }
 
   return (
-    //  Form Input section
-    <div className="bg-background text-foreground p-6 min-h-screen">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8 text-primary">
-          Build Your Learning Path
-        </h1>
+    <div className="bg-gradient-to-b from-background/95 to-background/100 text-foreground min-h-screen p-6">
+      <div className="max-w-3xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Build Your Learning Path
+          </h1>
+          <p className="text-foreground/80">
+            Create a personalized roadmap for your learning journey
+          </p>
+        </div>
 
+        {/* Form Section */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-6 mb-8 p-6 rounded-lg bg-foreground/5"
+          className="space-y-6 p-6 rounded-xl border border-foreground/20 bg-white/5 shadow-sm"
         >
           <div className="space-y-2">
-            <label htmlFor="topic" className="font-medium">
+            <label className="font-medium">
               What would you like to master?
             </label>
             <input
@@ -109,120 +121,117 @@ export default function RoadMap() {
               placeholder="Enter a topic (e.g., Advanced JavaScript, Data Science...)"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full p-3 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="level" className="font-medium">
-              Current skill level
-            </label>
-            <select
-              name="level"
-              id="level"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-              className="w-full p-3 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Expert">Expert</option>
-            </select>
-          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="font-medium">Current skill level</label>
+              <select
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                className="w-full p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
 
-          <div className="space-y-2">
-            <label htmlFor="duration" className="font-medium">
-              Learning timeline:{" "}
-            </label>
-            <select
-              className="mx-5 px-2 h-10 rounded border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
-              name="duration"
-              id="duration"
-              value={duration}
-              onChange={(e) => setDuration(Number(e.target.value))}
-            >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-            </select>
-            <span>Months</span>
+            <div className="space-y-2">
+              <label className="font-medium">Learning timeline</label>
+              <div className="flex items-center gap-3">
+                <select
+                  value={duration}
+                  onChange={(e) => setDuration(Number(e.target.value))}
+                  className="flex-1 p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                  {[1, 2, 3, 4, 5, 6].map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-foreground/80">Months</span>
+              </div>
+            </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 px-6 rounded-lg bg-primary text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full py-3 px-6 rounded-lg bg-primary text-background font-bold hover:bg-secondary transition-colors disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? "Creating Your Path..." : "Generate Learning Path"}
+            {loading ? "Creating..." : "Generate Learning Path"}
           </button>
         </form>
 
-        {/* Result Section */}
-        <section>
+        {/* Results Section */}
+        <section className="space-y-6">
           {roadmap ? (
-            <div className="grid gap-6">
-              <button
-                className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
-                onClick={handleConfirm}
-              >
-                {loading ? "Saving Your Path..." : "Save"}
-              </button>
-              {roadmap.map((week, key) => (
-                <article
-                  key={key}
-                  className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors"
+            <div className="space-y-4">
+              {roadmap.map((week, index) => (
+                <div
+                  key={index}
+                  className="border border-foreground/20 rounded-xl p-6 bg-white/10 hover:bg-white/20 hover:border-primary transition-colors shadow-sm"
                 >
-                  <h2 className="font-bold text-lg mb-3 text-primary">
-                    {week.title}
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold text-primary">
+                      Week {index + 1}
+                    </h2>
+                    {week.isCompleted && (
+                      <span className="text-xs px-2 py-1 rounded-full bg-primary/20 text-primary font-semibold">
+                        Completed
+                      </span>
+                    )}
+                  </div>
                   <ul className="space-y-2">
-                    {week.tasks.map((task, key) => (
-                      <li key={key} className="flex items-start">
-                        <span className="text-primary mr-2">•</span>
+                    {week.tasks.map((task, taskIndex) => (
+                      <li key={taskIndex} className="flex items-start">
+                        <span className="text-secondary mr-2">•</span>
                         <span>{task}</span>
                       </li>
                     ))}
                   </ul>
-                </article>
+                </div>
               ))}
             </div>
           ) : (
-            <div className="border border-foreground/10 rounded-xl p-6 bg-foreground/5 hover:bg-foreground/10 transition-colors text-center">
-              {" "}
-              Generate Roadmap to see it here !{" "}
+            <div className="border border-foreground/20 rounded-xl p-8 text-center bg-white/10 shadow-sm">
+              <p className="text-foreground/80">
+                Your generated roadmap will appear here
+              </p>
             </div>
           )}
         </section>
 
         {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h2 className="text-lg font-semibold mb-4">
-                Enter Roadmap Title
+          <div className="fixed inset-0 flex items-center justify-center bg-foreground/80 z-50">
+            <div className="bg-background p-6 rounded-xl border border-foreground/10 max-w-md w-full mx-4">
+              <h2 className="text-xl font-bold text-primary mb-4">
+                Save Your Roadmap
               </h2>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Roadmap title"
+                className="w-full p-3 mb-6 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary"
                 required
-                className="border border-gray-300 rounded px-3 py-2 w-full mb-4"
               />
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border rounded"
+                  className="px-4 py-2 rounded-lg border border-foreground/20 hover:bg-foreground/5"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                  className="px-4 py-2 rounded-lg bg-primary text-background hover:bg-secondary"
                 >
                   Confirm
                 </button>

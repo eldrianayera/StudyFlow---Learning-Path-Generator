@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const prompt = `Create an ${duration} months learning roadmap for the topic "${topic}" with current skill level : ${level} level. Each week should have 3-4 tasks. 
+    const prompt = `Create an ${duration} months learning roadmap for the topic "${topic}" with current skill level : ${level} level. Each week should have 4-5 tasks. 
 Return ONLY a JSON array in this format:
 
 [

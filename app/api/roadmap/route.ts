@@ -52,9 +52,7 @@ export async function GET(req: NextRequest) {
     console.log(data);
     return NextResponse.json({ data });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch roadmap" },
-      { status: 500 }
-    );
+    console.error(error);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

@@ -1,120 +1,268 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="bg-background text-foreground font-sans">
+      {/* Floating Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-10"
+            style={{
+              background: i % 2 ? "var(--primary)" : "var(--secondary)",
+              width: `${Math.random() * 200 + 100}px`,
+              height: `${Math.random() * 200 + 100}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              filter: "blur(40px)",
+              transform: `rotate(${Math.random() * 360}deg)`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 mt-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 z-0"></div>
-        <div className="relative z-10 max-w-4xl py-7">
+      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative z-10">
+        <div className="max-w-4xl space-y-8">
+          <div className="inline-block bg-primary/10 px-6 py-2 rounded-full border border-primary/20 mb-4">
+            <span className="text-primary font-medium">
+              AI-Powered Learning
+            </span>
+          </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-primary">
-            StudyFlow
+            Master Anything with{" "}
+            <span className="text-secondary">StudyFlow</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
-            AI-powered learning tracker that creates custom study plans, tracks
-            your progress, and keeps you motivated to achieve your goals.
+          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-foreground/80">
+            Transform how you learn with personalized study plans, progress
+            tracking, and AI-powered tools to maximize your potential.
           </p>
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/roadmap"
-              className="bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-colors"
+              className="bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-all transform hover:scale-105 shadow-lg hover:shadow-primary/20"
             >
-              Generate Your Roadmap
+              Start Learning Journey →
             </Link>
-            <div className="w-full max-w-3xl aspect-video bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl border border-foreground/10 flex justify-center items-center">
-              <Image
-                src="/study.png"
-                alt="study"
-                width={1265}
-                height={1265}
-                className="rounded-lg"
-              />
+            <Link
+              href="/features"
+              className="px-8 py-4 rounded-lg text-lg font-medium border border-foreground/20 hover:border-primary hover:text-primary transition-all"
+            >
+              Explore Features
+            </Link>
+          </div>
+
+          {/* Abstract Hero Visual */}
+          <div className="mt-16 w-full max-w-3xl aspect-video mx-auto relative">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-foreground/10 overflow-hidden">
+              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-4 p-4">
+                {[...Array(9)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-lg bg-foreground/5 border border-foreground/10 animate-pulse"
+                    style={{
+                      animationDelay: `${i * 0.1}s`,
+                      animationDuration: "3s",
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-4">Why StudyFlow</h2>
-          <p className="text-center text-xl mb-12 max-w-3xl mx-auto">
-            Transform your learning experience with our powerful features
-          </p>
+      <section className="py-24 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Your Complete <span className="text-primary">Learning</span>{" "}
+              Toolkit
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto text-foreground/80">
+              Everything you need to learn effectively and track your progress
+            </p>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-xl border border-foreground/10 hover:border-primary transition-colors">
-              <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-2xl font-semibold mb-4">Progress Tracking</h3>
-              <p>
-                Monitor your learning streaks and milestones with intuitive
-                dashboards that show your growth over time.
-              </p>
-            </div>
-            <div className="p-8 rounded-xl border border-foreground/10 hover:border-primary transition-colors">
-              <div className="text-6xl mb-4">🤖</div>
-              <h3 className="text-2xl font-semibold mb-4">AI Study Plans</h3>
-              <p>
-                Receive personalized study plans tailored to your specific
-                goals, schedule, and learning pace.
-              </p>
-            </div>
-            <div className="p-8 rounded-xl border border-foreground/10 hover:border-primary transition-colors">
-              <div className="text-6xl mb-4">📝</div>
-              <h3 className="text-2xl font-semibold mb-4">Smart Reviews</h3>
-              <p>
-                Generate AI-powered summaries and quizzes to reinforce your
-                learning efficiently.
-              </p>
-            </div>
+            {[
+              {
+                icon: "📊",
+                title: "Progress Tracking",
+                description:
+                  "Visual dashboards show your learning streaks, milestones, and growth over time.",
+                features: [
+                  "Daily streaks",
+                  "Progress charts",
+                  "Achievement badges",
+                ],
+              },
+              {
+                icon: "🤖",
+                title: "AI Study Plans",
+                description:
+                  "Personalized roadmaps tailored to your goals, schedule, and learning style.",
+                features: [
+                  "Custom schedules",
+                  "Adaptive pacing",
+                  "Topic breakdowns",
+                ],
+              },
+              {
+                icon: "📝",
+                title: "Smart Reviews",
+                description:
+                  "AI-generated summaries and quizzes to reinforce what you learn.",
+                features: [
+                  "Spaced repetition",
+                  "Knowledge checks",
+                  "Focus areas",
+                ],
+              },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="bg-background rounded-xl border border-foreground/10 p-8 hover:border-primary transition-all hover:shadow-xl group"
+              >
+                <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  {feature.icon}
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-primary">
+                  {feature.title}
+                </h3>
+                <p className="mb-4 text-foreground/90">{feature.description}</p>
+                <ul className="space-y-2">
+                  {feature.features.map((item, i) => (
+                    <li key={i} className="flex items-center">
+                      <span className="text-secondary mr-2">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 px-6 bg-foreground/5">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-4">How It Works</h2>
-          <p className="text-center text-xl mb-12 max-w-3xl mx-auto">
-            Get started in just a few simple steps
-          </p>
+      <section className="py-24 px-6 bg-foreground/5 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Simple <span className="text-primary">Process</span>, Powerful
+              Results
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto text-foreground/80">
+              Get started in minutes and see immediate benefits
+            </p>
+          </div>
 
-          <div className="space-y-12">
+          <div className="relative">
+            {/* Timeline */}
+            <div className="absolute left-8 md:left-1/2 h-full w-0.5 bg-primary/20 -translate-x-1/2 hidden md:block"></div>
+
+            <div className="space-y-12 md:space-y-0">
+              {[
+                {
+                  step: "1",
+                  title: "Define Your Goals",
+                  description:
+                    "Tell us what you want to learn and your current level. Our AI analyzes your needs.",
+                  icon: "✏️",
+                },
+                {
+                  step: "2",
+                  title: "Get Your Plan",
+                  description:
+                    "Receive a personalized roadmap with weekly milestones and daily tasks.",
+                  icon: "📅",
+                },
+                {
+                  step: "3",
+                  title: "Learn & Track",
+                  description:
+                    "Follow your plan, log progress, and get adaptive recommendations.",
+                  icon: "📊",
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="relative md:flex md:items-center md:even:flex-row-reverse"
+                >
+                  <div className="md:w-1/2 md:px-12 mb-4 md:mb-0">
+                    <div className="bg-background border border-foreground/10 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                      <div className="text-4xl mb-4">{item.icon}</div>
+                      <div className="text-primary text-xl font-medium mb-2">
+                        Step {item.step}
+                      </div>
+                      <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
+                      <p className="text-foreground/90">{item.description}</p>
+                    </div>
+                  </div>
+                  <div className="hidden md:block md:w-1/2">
+                    <div
+                      className={`h-1 w-8 bg-primary absolute ${
+                        index === 2 ? "hidden" : ""
+                      }`}
+                    ></div>
+                    <div className="w-16 h-16 rounded-full bg-primary/10 border-4 border-background flex items-center justify-center text-primary text-xl font-bold absolute left-1/2 -translate-x-1/2">
+                      {item.step}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Loved by <span className="text-primary">Learners</span> Worldwide
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto text-foreground/80">
+              Join thousands who've transformed their learning experience
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                step: "1",
-                title: "Create Your Path",
-                description:
-                  "Enter your topic and goals, and StudyFlow generates a personalized study roadmap with weekly milestones.",
-                icon: "✏️",
+                quote:
+                  "StudyFlow helped me organize my coding journey. I went from beginner to landing my first developer job in 6 months!",
+                author: "Sarah K.",
+                role: "Frontend Developer",
               },
               {
-                step: "2",
-                title: "Track Progress",
-                description:
-                  "Log your daily study sessions, track your streaks, and see visual insights of your growth.",
-                icon: "📈",
+                quote:
+                  "The AI-generated study plans adapt to my progress and keep me motivated. I've never learned so efficiently.",
+                author: "Michael T.",
+                role: "Data Science Student",
               },
               {
-                step: "3",
-                title: "Reinforce Learning",
-                description:
-                  "Generate AI-powered summaries and quizzes to review and retain knowledge effectively.",
-                icon: "🧠",
+                quote:
+                  "Finally a tool that actually helps me retain what I learn. The spaced repetition and quizzes are game-changers.",
+                author: "Priya M.",
+                role: "Medical Student",
               },
-            ].map((item, index) => (
+            ].map((testimonial, index) => (
               <div
                 key={index}
-                className="flex flex-col md:flex-row gap-8 items-center bg-background p-6 rounded-xl border border-foreground/10"
+                className="bg-background border border-foreground/10 rounded-xl p-8 hover:border-primary transition-all hover:shadow-lg"
               >
-                <div className="md:w-1/6 text-5xl">{item.icon}</div>
-                <div className="md:w-5/6">
-                  <div className="text-primary text-xl font-medium mb-1">
-                    Step {item.step}
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-3">{item.title}</h3>
-                  <p className="text-lg">{item.description}</p>
+                <div className="text-primary text-4xl mb-4">"</div>
+                <p className="text-lg mb-6 italic text-foreground/90">
+                  {testimonial.quote}
+                </p>
+                <div className="border-t border-foreground/10 pt-4">
+                  <p className="font-bold">{testimonial.author}</p>
+                  <p className="text-foreground/70">{testimonial.role}</p>
                 </div>
               </div>
             ))}
@@ -122,31 +270,79 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6 text-center">
-        <div className="max-w-4xl mx-auto bg-gradient-to-r from-primary/10 to-secondary/10 p-12 rounded-xl border border-primary/20">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Transform Your Learning?
+      {/* Final CTA */}
+      <section className="py-24 px-6 bg-gradient-to-br from-primary/10 to-secondary/10 relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to <span className="text-primary">Transform</span> Your
+            Learning?
           </h2>
-          <p className="text-xl mb-8">
-            Join thousands of learners who are achieving their goals with
-            StudyFlow
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-foreground/80">
+            Join StudyFlow today and experience the future of personalized
+            learning
           </p>
-          <Link
-            href="/roadmap"
-            className="inline-block bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-colors"
-          >
-            Get Started for Free
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/signup"
+              className="bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-all transform hover:scale-105 shadow-lg hover:shadow-primary/20"
+            >
+              Get Started Free
+            </Link>
+            <Link
+              href="/demo"
+              className="px-8 py-4 rounded-lg text-lg font-medium border border-foreground/20 hover:border-primary hover:text-primary transition-all"
+            >
+              See Demo
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-foreground/10 text-center">
-        <div className="max-w-6xl mx-auto px-6">
-          <p>
+      <footer className="py-12 border-t border-foreground/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-6 md:mb-0">
+              <Link href="/" className="text-2xl font-bold text-primary">
+                StudyFlow
+              </Link>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6">
+              <Link
+                href="/features"
+                className="hover:text-primary transition-colors"
+              >
+                Features
+              </Link>
+              <Link
+                href="/pricing"
+                className="hover:text-primary transition-colors"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/about"
+                className="hover:text-primary transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                href="/blog"
+                className="hover:text-primary transition-colors"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/contact"
+                className="hover:text-primary transition-colors"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+          <div className="mt-8 text-center text-foreground/70 text-sm">
             &copy; {new Date().getFullYear()} StudyFlow. All rights reserved.
-          </p>
+          </div>
         </div>
       </footer>
     </main>
