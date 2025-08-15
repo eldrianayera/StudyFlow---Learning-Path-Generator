@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     );
   }
   try {
-    await prisma.roadmap.create({
+    const createdRoadmap = await prisma.roadmap.create({
       data: {
         userClerkId: user.id,
         roadmap: body.roadmap,
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       },
     });
     return NextResponse.json(
-      { message: "roadmap save succesfully" },
+      { message: "roadmap save succesfully", id: createdRoadmap.id },
       { status: 200 }
     );
   } catch (error) {

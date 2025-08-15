@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { roadmapInput } from "../page";
+import toast from "react-hot-toast";
 
 export default function RoadmapDetail() {
   const [roadmap, setRoadmap] = useState<roadmapInput | null>(null);
@@ -11,14 +12,19 @@ export default function RoadmapDetail() {
   const id = String(params.id);
 
   useEffect(() => {
+    const loadingToast = "loading-toast";
+    toast.loading("Loading your learning path...", { id: loadingToast });
+
     async function fetchRoadmap(id: string) {
       setLoading(true);
       try {
         const res = await fetch(`/api/roadmap/${id}`);
         const responseText = await res.json();
         setRoadmap(responseText.data);
+        toast.success("Learning path ready !", { id: loadingToast });
       } catch (error) {
-        console.error("Failed to fetch roadmap");
+        toast.error("Learning path ready !", { id: loadingToast });
+        console.error("Failed to fetch learning path");
       } finally {
         setLoading(false);
       }
@@ -64,7 +70,7 @@ export default function RoadmapDetail() {
 
         {roadmap ? (
           <div className="space-y-8">
-            <h1 className="text-4xl font-bold text-foreground text-center mb-2">
+            <h1 className="text-4xl font-bold text-foreground text-center mb-6">
               {roadmap.title}
             </h1>
 

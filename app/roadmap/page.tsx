@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export type Week = { title: string; tasks: string[] };
 
@@ -25,6 +26,8 @@ export default function RoadMap() {
     }
 
     setLoading(true);
+    const generatingId = toast.loading("Generating...");
+
     setRoadmap(null);
 
     try {
@@ -36,6 +39,7 @@ export default function RoadMap() {
 
       const data = await res.json();
 
+      toast.success("Learning Path generated !", { id: generatingId });
       if (!res.ok) {
         console.error(data.error);
         setRoadmap([]);
@@ -43,6 +47,8 @@ export default function RoadMap() {
         setRoadmap(data.roadmap);
       }
     } catch (err) {
+      toast.error("Failed to generate learning path !", { id: generatingId });
+
       console.error(err);
       setRoadmap([]);
     } finally {
@@ -56,18 +62,26 @@ export default function RoadMap() {
 
   async function handleSave() {
     try {
-      await fetch("/api/roadmap", {
+      const savingId = toast.loading("Saving...");
+
+      const res = await fetch("/api/roadmap", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ roadmap, title }),
       });
+
+      const response = await res.json();
+      const id = response.id;
+
+      toast.success("Learning Path generated !", { id: savingId });
+
+      route.push(`/dashboard/${id}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       return console.error("Fail to Save Roadmap");
     }
-
-    route.push("/dashboard");
   }
 
   return (

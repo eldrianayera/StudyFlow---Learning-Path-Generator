@@ -3,11 +3,11 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="bg-background border-b border-foreground/10 py-4 px-6">
+    <nav className="bg-primary/60 border-b border-background/10 py-4 px-6">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <Link
           href="/"
-          className="text-xl font-bold text-primary hover:text-secondary transition-colors"
+          className="text-2xl font-bold text-purple-950 hover:text-background transition-colors"
         >
           StudyFlow
         </Link>
@@ -18,13 +18,13 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-6">
               <Link
                 href="/dashboard"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-background hover:text-foreground transition-colors"
               >
                 My Learning
               </Link>
               <Link
                 href="/roadmap"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-background hover:text-foreground transition-colors"
               >
                 Generate Roadmap
               </Link>
@@ -32,11 +32,11 @@ export default function Navbar() {
 
             <div className="flex items-center gap-4">
               <SignOutButton>
-                <button className="text-foreground/70 hover:text-primary transition-colors text-sm">
+                <button className="text-background/70 hover:text-foreground transition-colors text-sm">
                   Sign Out
                 </button>
               </SignOutButton>
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </div>
           </SignedIn>
 
@@ -45,13 +45,13 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-6">
               <Link
                 href="/dashboard"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-background hover:text-foreground transition-colors"
               >
                 My Learning
               </Link>
               <Link
                 href="/roadmap"
-                className="text-foreground hover:text-primary transition-colors"
+                className="text-background hover:text-foreground transition-colors"
               >
                 Generate Roadmap
               </Link>
@@ -59,14 +59,8 @@ export default function Navbar() {
 
             <div className="flex items-center gap-4">
               <Link
-                href="/sign-in"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
                 href="/sign-up"
-                className="bg-primary text-background px-4 py-2 rounded-md hover:bg-secondary transition-colors"
+                className="bg-purple-950 text-background px-4 py-2 rounded-md hover:bg-secondary transition-colors"
               >
                 Sign Up
               </Link>
