@@ -61,6 +61,10 @@ export default function RoadMap() {
   }
 
   async function handleSave() {
+    if (!title) {
+      toast.error("Please Input Title");
+      return;
+    }
     try {
       const savingId = toast.loading("Saving...");
 
@@ -206,6 +210,7 @@ export default function RoadMap() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Roadmap title"
+                required
                 className="border border-gray-300 rounded px-3 py-2 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
