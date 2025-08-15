@@ -4,13 +4,27 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
 }
 
 @layer base {
   :root {
-    --background: rgb(225, 225, 225);
-    --foreground: rgb(0, 0, 0);
-    --primary: rgb(69, 32, 155);
+    --background: rgb(255, 255, 255); /* Clean white background */
+    --foreground: rgb(
+      30,
+      30,
+      30
+    ); /* Soft black for text (better readability than pure black) */
+    --primary: rgb(
+      103,
+      58,
+      183
+    ); /* Deep purple (modern, trustworthy, creative) */
+    --secondary: rgb(
+      255,
+      152,
+      0
+    ); /* Vibrant orange (contrasts nicely with purple) */
   }
 }
 

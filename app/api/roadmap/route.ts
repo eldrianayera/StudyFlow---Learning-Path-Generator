@@ -1,10 +1,11 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { log } from "console";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const roadmap = body.roadmap;
+  console.log(body);
 
   const user = await currentUser();
 
@@ -18,7 +19,8 @@ export async function POST(req: NextRequest) {
     await prisma.roadmap.create({
       data: {
         userClerkId: user.id,
-        roadMap: roadmap,
+        roadmap: body.roadmap,
+        title: body.title,
       },
     });
     return NextResponse.json(
@@ -47,12 +49,8 @@ export async function GET(req: NextRequest) {
       where: { userClerkId: user.id },
     });
 
-    const roadmap = data.map((item) => ({
-      roadmap: item.roadMap,
-      id: item.id,
-    }));
-
-    return NextResponse.json({ roadmap });
+    console.log(data);
+    return NextResponse.json({ data });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch roadmap" },

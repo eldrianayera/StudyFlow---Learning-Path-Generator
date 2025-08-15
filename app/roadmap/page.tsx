@@ -10,12 +10,15 @@ export default function RoadMap() {
   const [level, setLevel] = useState<string>("beginner");
   const [duration, setDuration] = useState<number>(3);
   const [roadmap, setRoadmap] = useState<Week[] | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const route = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!topic.trim()) {
       alert("Please enter a topic.");
       return;
@@ -47,6 +50,10 @@ export default function RoadMap() {
     }
   };
 
+  function handleConfirm() {
+    setIsModalOpen(true);
+  }
+
   async function handleSave() {
     try {
       await fetch("/api/roadmap", {
@@ -54,7 +61,7 @@ export default function RoadMap() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ roadmap }),
+        body: JSON.stringify({ roadmap, title }),
       });
     } catch (error) {
       return console.error("Fail to Save Roadmap");
@@ -161,7 +168,7 @@ export default function RoadMap() {
 
               <button
                 className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
-                onClick={handleSave}
+                onClick={handleConfirm}
               >
                 {loading ? "Saving Your Path..." : "Save"}
               </button>
@@ -173,6 +180,38 @@ export default function RoadMap() {
             </div>
           )}
         </section>
+
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h2 className="text-lg font-semibold mb-4">
+                Enter Roadmap Title
+              </h2>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Roadmap title"
+                className="border border-gray-300 rounded px-3 py-2 w-full mb-4"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 border rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
