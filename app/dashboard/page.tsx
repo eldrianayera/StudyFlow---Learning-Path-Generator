@@ -82,11 +82,23 @@ export default function Dashboard() {
             <div className="grid gap-6">
               {/* Mobile Floating Action Button (only shows on mobile) */}
               <div className="md:hidden fixed bottom-6 right-6 z-40">
-                <Link
-                  href="/roadmap"
-                  className="flex items-center justify-center w-14 h-14 rounded-full bg-primary text-background shadow-lg hover:bg-secondary transition-colors"
-                >
-                  <span className="text-2xl">+</span>
+                <Link href="/roadmap" className="rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="56"
+                    height="56"
+                    viewBox="0 0 24 24"
+                    fill="var(--primary)"
+                    stroke="var(--background)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="drop-shadow-lg hover:opacity-90 transition-opacity"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12h8" />
+                    <path d="M12 8v8" />
+                  </svg>
                 </Link>
               </div>
 
