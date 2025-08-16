@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { roadmapInput } from "../page";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function RoadmapDetail() {
   const [roadmap, setRoadmap] = useState<roadmapInput | null>(null);
@@ -45,9 +46,12 @@ export default function RoadmapDetail() {
 
       fetchRoadmap(id);
       toast.success("Task Status Changed !", { id: loadingToast });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Task Status Change Failed !", { id: loadingToast });
-      console.error(error.message);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+      console.error('"Task Status Change Failed  : Unknown error');
     }
   }
 
@@ -64,7 +68,7 @@ export default function RoadmapDetail() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <a
+          <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors"
           >
@@ -83,7 +87,7 @@ export default function RoadmapDetail() {
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
             Back to Dashboard
-          </a>
+          </Link>
         </div>
 
         {roadmap ? (
@@ -149,12 +153,12 @@ export default function RoadmapDetail() {
         ) : (
           <div className="text-center py-12">
             <div className="text-foreground mb-4">No roadmap found</div>
-            <a
+            <Link
               href="/dashboard"
               className="text-primary hover:text-secondary transition-colors"
             >
               Generate a new roadmap
-            </a>
+            </Link>
           </div>
         )}
       </div>

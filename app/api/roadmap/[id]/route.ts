@@ -71,9 +71,15 @@ export async function PUT(
         where: { id },
         data: { roadmap: currentRoadmap },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return NextResponse.json(
+          { error: `Failed to change task status: ${error.message}` },
+          { status: 500 }
+        );
+      }
       return NextResponse.json(
-        { error: `Failed to change task status :, ${error.message}` },
+        { error: "Failed to change task status: Unknown error" },
         { status: 500 }
       );
     }
