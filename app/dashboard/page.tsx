@@ -29,11 +29,11 @@ export default function Dashboard() {
       const responseText = await res.json();
       if (responseText.data.length === 0) {
         setRoadmaps(null);
+        toast.dismiss(TOAST_ID);
         return;
       }
 
       setRoadmaps(responseText.data);
-
       toast.success("Roadmaps loaded!", { id: TOAST_ID });
     } catch (error) {
       toast.error("Failed to fetch roadmap", { id: TOAST_ID });
@@ -45,7 +45,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     toast.loading("Loading your learning paths...", { id: TOAST_ID });
-
     fetchRoadmap();
   }, []);
 
