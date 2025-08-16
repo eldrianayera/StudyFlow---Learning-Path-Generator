@@ -184,7 +184,7 @@ export default function RoadMap() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-bold text-primary">
-                      Week {index + 1}
+                      {week.title}
                     </h2>
                     {week.isCompleted && (
                       <span className="text-xs px-2 py-1 rounded-full bg-primary/20 text-primary font-semibold">
