@@ -22,21 +22,6 @@ export default function Dashboard() {
       const res = await fetch("/api/roadmap");
       const responseText = await res.json();
       if (responseText.data.length === 0) {
-        toast(
-          (t) => (
-            <div className="flex-center flex-col gap-2">
-              <p>No learning path yet...</p>
-              <a
-                href="/roadmap"
-                className="bg-primary text-background px-4 py-1 rounded-full"
-              >
-                {" "}
-                Create Now !{" "}
-              </a>
-            </div>
-          ),
-          { id: TOAST_ID }
-        );
         setRoadmaps(null);
         return;
       }
