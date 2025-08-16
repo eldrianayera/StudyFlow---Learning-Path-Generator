@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { log } from "console";
 import { Week } from "@/app/roadmap/page";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { params } = context;
   const { id } = params;
   if (!id) {
     return NextResponse.json({ error: "Id is required" });
