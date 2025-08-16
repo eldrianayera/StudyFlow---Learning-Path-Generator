@@ -7,7 +7,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = params;
   if (!id) {
     return NextResponse.json({ error: "Id is required" });
   }
@@ -31,7 +31,7 @@ export async function PUT(
 ) {
   const body = await req.json();
   const { index } = body;
-  const { id } = await params;
+  const { id } = params;
 
   if (!id) {
     return NextResponse.json({ error: "Id is required" });
