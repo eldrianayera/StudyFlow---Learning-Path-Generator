@@ -254,7 +254,7 @@ export default function Dashboard() {
             <p className="text-foreground/80 mb-6">
               Are you sure you want to delete{" "}
               <span className="font-medium text-primary">
-                "{confirmDelete.title}"
+                &quot;{confirmDelete.title}&quot;
               </span>
               ? This action cannot be undone.
             </p>
