@@ -72,8 +72,8 @@ export default function Dashboard() {
       toast.loading("Learning Path Succesfully Deleted !", { id: TOAST_ID });
 
       fetchRoadmap();
-    } catch (error: any) {
-      console.error("Failed to delete learning path !", error.message);
+    } catch (error) {
+      console.error("Failed to delete learning path !");
     }
     console.log(id);
   }
