@@ -15,7 +15,7 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           {/* Signed In */}
           <SignedIn>
-            <div className="hidden md:flex items-center gap-6">
+            <div className="flex items-center gap-6">
               <Link
                 href="/dashboard"
                 className="text-background hover:text-foreground transition-colors"
@@ -24,18 +24,21 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/roadmap"
-                className="text-background hover:text-foreground transition-colors"
+                className="max-md:hidden text-background hover:text-foreground transition-colors"
               >
                 Generate Roadmap
               </Link>
             </div>
 
             <div className="flex items-center gap-4">
-              <SignOutButton>
-                <button className="text-background/70 hover:text-foreground transition-colors text-sm">
-                  Sign Out
-                </button>
-              </SignOutButton>
+              <div className="max-md:hidden">
+                <SignOutButton>
+                  <button className="text-background/70 hover:text-foreground transition-colors text-sm">
+                    Sign Out
+                  </button>
+                </SignOutButton>
+              </div>
+
               <UserButton />
             </div>
           </SignedIn>

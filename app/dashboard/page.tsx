@@ -80,6 +80,23 @@ export default function Dashboard() {
 
           {roadmaps ? (
             <div className="grid gap-6">
+              {/* Mobile Floating Action Button (only shows on mobile) */}
+              <div className="md:hidden fixed bottom-6 right-6 z-40">
+                <Link
+                  href="/roadmap"
+                  className="flex items-center justify-center w-14 h-14 rounded-full bg-primary text-background shadow-lg hover:bg-secondary transition-colors"
+                >
+                  <span className="text-2xl">+</span>
+                </Link>
+              </div>
+
+              {/* Regular Create Button (shows on desktop) */}
+              <Link
+                href="/roadmap"
+                className="hidden md:block w-full text-background text-center bg-primary rounded-lg p-3 hover:bg-secondary transition-colors"
+              >
+                Create Learning Path
+              </Link>
               {roadmaps.map((item) => (
                 <div
                   key={item.id}
