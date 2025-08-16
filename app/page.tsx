@@ -24,7 +24,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="flex-center text-center px-6 relative z-10 mt-22 ">
-        <div className="min-h-screen max-w-4xl space-y-8">
+        <div className="max-w-4xl space-y-8">
           <div className="inline-block bg-primary/10 px-6 py-2 rounded-full border border-primary/20 mb-4">
             <span className="text-primary font-medium">
               AI-Powered Learning
