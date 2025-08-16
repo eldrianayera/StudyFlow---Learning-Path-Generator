@@ -15,6 +15,12 @@ export type roadmapInput = {
 
 export default function Dashboard() {
   const [roadmaps, setRoadmaps] = useState<roadmapInput[] | null>(null);
+
+  const [confirmDelete, setConfirmDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+
   const [loading, setLoading] = useState<boolean>(true);
 
   async function fetchRoadmap() {
@@ -54,13 +60,14 @@ export default function Dashboard() {
         },
       });
 
-      toast.loading("Learning Path Succesfully Deleted !", { id: TOAST_ID });
-
       fetchRoadmap();
+      toast.success("Learning Path Succesfully Deleted !", { id: TOAST_ID });
     } catch (error) {
+      toast.error("Failed to delete learning path", { id: TOAST_ID });
       console.error("Failed to delete learning path !");
+    } finally {
+      setConfirmDelete(null);
     }
-    console.log(id);
   }
 
   return (
@@ -92,12 +99,25 @@ export default function Dashboard() {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
-                          handleDelete(item.id);
+                          setConfirmDelete({ id: item.id, title: item.title });
                         }}
-                        className="text-primary hover:text-red-600 transition-colors p-1"
+                        className="bg-primary text-background hover:bg-red-600 rounded-lg transition-colors duration-300 p-1"
                         aria-label="Delete roadmap"
                       >
-                        🗑️
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M3 6h18"></path>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
                       </button>
                     </div>
 
@@ -203,6 +223,59 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Modal  */}
+      {/* Delete Confirmation Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-foreground/80 backdrop-blur-sm">
+          <div className="bg-background border border-foreground/10 rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2 rounded-full bg-primary/10 text-primary">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 6h18"></path>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-foreground">
+                Delete Learning Path
+              </h3>
+            </div>
+
+            <p className="text-foreground/80 mb-6">
+              Are you sure you want to delete{" "}
+              <span className="font-medium text-primary">
+                "{confirmDelete.title}"
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="px-5 py-2 rounded-lg border border-foreground/20 hover:bg-foreground/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(confirmDelete.id)}
+                className="px-5 py-2 rounded-lg bg-red-600 text-background hover:bg-red-400 transition-colors duration-300"
+              >
+                Delete Path
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
