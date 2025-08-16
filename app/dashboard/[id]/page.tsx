@@ -51,7 +51,7 @@ export default function RoadmapDetail() {
       if (error instanceof Error) {
         console.error(error.message);
       }
-      console.error('"Task Status Change Failed  : Unknown error');
+      console.error('Task Status Change Failed  : Unknown error');
     }
   }
 

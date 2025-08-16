@@ -29,7 +29,7 @@ export default function Dashboard() {
           toast(
             (t) => (
               <div className="flex-center flex-col gap-2">
-                <p>You don't have any learning path ...</p>
+                <p>No learning path yet...</p>
                 <a
                   href="/roadmap"
                   className="bg-primary text-background px-4 py-1 rounded-full"

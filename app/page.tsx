@@ -227,7 +227,7 @@ export default function Home() {
               Loved by <span className="text-primary">Learners</span> Worldwide
             </h2>
             <p className="text-xl max-w-3xl mx-auto text-foreground/80">
-              Join thousands who've transformed their learning experience
+              Join thousands whom transformed their learning experience
             </p>
           </div>
 
@@ -241,7 +241,7 @@ export default function Home() {
               },
               {
                 quote:
-                  "The AI-generated study plans adapt to my progress and keep me motivated. I've never learned so efficiently.",
+                  "The AI-generated study plans adapt to my progress and keep me motivated. I have never learned so efficiently.",
                 author: "Michael T.",
                 role: "Data Science Student",
               },
