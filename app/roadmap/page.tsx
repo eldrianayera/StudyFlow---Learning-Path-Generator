@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { log } from "console";
+import { TOAST_ID } from "@/lib/toast";
 
 export type Week = { title: string; tasks: string[]; isCompleted: boolean };
 
@@ -27,7 +27,6 @@ export default function RoadMap() {
     }
 
     setLoading(true);
-    const generatingId = toast.loading("Generating...");
 
     setRoadmap(null);
 
@@ -40,7 +39,7 @@ export default function RoadMap() {
 
       const data = await res.json();
 
-      toast.success("Learning Path generated !", { id: generatingId });
+      toast.success("Learning Path generated !", { id: TOAST_ID });
       if (!res.ok) {
         console.error(data.error);
         setRoadmap([]);
@@ -53,7 +52,7 @@ export default function RoadMap() {
         setRoadmap(addedIsCompleted);
       }
     } catch (err) {
-      toast.error("Failed to generate learning path !", { id: generatingId });
+      toast.error("Failed to generate learning path !", { id: TOAST_ID });
 
       console.error(err);
       setRoadmap([]);
@@ -172,6 +171,12 @@ export default function RoadMap() {
         <section className="space-y-6">
           {roadmap ? (
             <div className="space-y-4">
+              <button
+                className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+                onClick={handleConfirm}
+              >
+                {loading ? "Saving Your Path..." : "Save"}
+              </button>
               {roadmap.map((week, index) => (
                 <div
                   key={index}

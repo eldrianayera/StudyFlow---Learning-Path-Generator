@@ -23,7 +23,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center items-center text-center px-6 relative z-10">
+      <section className="min-h-screen flex-center text-center px-6 relative z-10 -translate-y-12">
         <div className="max-w-4xl space-y-8">
           <div className="inline-block bg-primary/10 px-6 py-2 rounded-full border border-primary/20 mb-4">
             <span className="text-primary font-medium">
@@ -45,30 +45,6 @@ export default function Home() {
             >
               Start Learning Journey →
             </Link>
-            <Link
-              href="/features"
-              className="px-8 py-4 rounded-lg text-lg font-medium border border-foreground/20 hover:border-primary hover:text-primary transition-all"
-            >
-              Explore Features
-            </Link>
-          </div>
-
-          {/* Abstract Hero Visual */}
-          <div className="mt-16 w-full max-w-3xl aspect-video mx-auto relative">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-foreground/10 overflow-hidden">
-              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-4 p-4">
-                {[...Array(9)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="rounded-lg bg-foreground/5 border border-foreground/10 animate-pulse"
-                    style={{
-                      animationDelay: `${i * 0.1}s`,
-                      animationDuration: "3s",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -283,16 +259,10 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/signup"
+              href="/sign-up"
               className="bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-all transform hover:scale-105 shadow-lg hover:shadow-primary/20"
             >
               Get Started Free
-            </Link>
-            <Link
-              href="/demo"
-              className="px-8 py-4 rounded-lg text-lg font-medium border border-foreground/20 hover:border-primary hover:text-primary transition-all"
-            >
-              See Demo
             </Link>
           </div>
         </div>
@@ -301,45 +271,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 border-t border-foreground/10 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <Link href="/" className="text-2xl font-bold text-primary">
-                StudyFlow
-              </Link>
-            </div>
-            <div className="flex flex-wrap justify-center gap-6">
-              <Link
-                href="/features"
-                className="hover:text-primary transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="/pricing"
-                className="hover:text-primary transition-colors"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/about"
-                className="hover:text-primary transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/blog"
-                className="hover:text-primary transition-colors"
-              >
-                Blog
-              </Link>
-              <Link
-                href="/contact"
-                className="hover:text-primary transition-colors"
-              >
-                Contact
-              </Link>
-            </div>
-          </div>
+          <Link href="/" className="text-2xl font-bold text-primary">
+            StudyFlow
+          </Link>
           <div className="mt-8 text-center text-foreground/70 text-sm">
             &copy; {new Date().getFullYear()} StudyFlow. All rights reserved.
           </div>

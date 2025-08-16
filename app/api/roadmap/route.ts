@@ -5,7 +5,6 @@ import { log } from "console";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  console.log(body);
 
   const user = await currentUser();
 
@@ -49,7 +48,6 @@ export async function GET(req: NextRequest) {
       where: { userClerkId: user.id },
     });
 
-    console.log(data);
     return NextResponse.json({ data });
   } catch (error) {
     console.error(error);

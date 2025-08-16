@@ -5,24 +5,24 @@ import { useEffect, useState } from "react";
 import { roadmapInput } from "../page";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { TOAST_ID } from "@/lib/toast";
 
 export default function RoadmapDetail() {
   const [roadmap, setRoadmap] = useState<roadmapInput | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const params = useParams();
   const id = String(params.id);
-  const loadingToast = "loading-toast";
 
   async function fetchRoadmap(id: string) {
-    toast.loading("Loading your learning path...", { id: loadingToast });
+    toast.loading("Loading your learning path...", { id: TOAST_ID });
     setLoading(true);
     try {
       const res = await fetch(`/api/roadmap/${id}`);
       const responseText = await res.json();
-      toast.dismiss(loadingToast);
+      toast.dismiss(TOAST_ID);
       setRoadmap(responseText.data);
     } catch (error) {
-      toast.error("Learning path ready !", { id: loadingToast });
+      toast.error("Learning path ready !", { id: TOAST_ID });
       console.error("Failed to fetch learning path");
     } finally {
       setLoading(false);
@@ -34,7 +34,7 @@ export default function RoadmapDetail() {
   }, [id]);
 
   async function handleClick(index: number) {
-    toast.loading("Changing Task Status...", { id: loadingToast });
+    toast.loading("Changing Task Status...", { id: TOAST_ID });
     try {
       await fetch(`/api/roadmap/${id}`, {
         method: "PUT",
@@ -45,13 +45,13 @@ export default function RoadmapDetail() {
       });
 
       fetchRoadmap(id);
-      toast.success("Task Status Changed !", { id: loadingToast });
+      toast.success("Task Status Changed !", { id: TOAST_ID });
     } catch (error: unknown) {
-      toast.error("Task Status Change Failed !", { id: loadingToast });
+      toast.error("Task Status Change Failed !", { id: TOAST_ID });
       if (error instanceof Error) {
         console.error(error.message);
       }
-      console.error('Task Status Change Failed  : Unknown error');
+      console.error("Task Status Change Failed  : Unknown error");
     }
   }
 

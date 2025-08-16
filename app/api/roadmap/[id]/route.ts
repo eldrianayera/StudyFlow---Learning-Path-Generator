@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { log } from "console";
 import { Week } from "@/app/roadmap/page";
+import { Prisma } from "@prisma/client";
 
 export async function GET(
   req: NextRequest,
@@ -23,6 +23,45 @@ export async function GET(
 
     return NextResponse.json({ error: `Internal Error ` }, { status: 500 });
   }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  if (!id) {
+    return NextResponse.json({ error: "Id is required" });
+  }
+
+  try {
+    await prisma.roadmap.delete({
+      where: { id },
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: `Failed to change task status: ${error.message}` },
+        { status: 500 }
+      );
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Prisma knows the error code
+      console.log("Error code:", error.code); // e.g., "P2025" for record not found
+      console.log("Meta:", error.meta); // extra info like target ID
+      console.log("Message:", error.message); // human-readable message
+    }
+
+    return NextResponse.json(
+      { error: "Failed to change task status: Unknown error" },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json(
+    { message: "Learning Path has been deleted" },
+    { status: 200 }
+  );
 }
 
 export async function PUT(

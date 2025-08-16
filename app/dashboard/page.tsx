@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Week } from "../roadmap/page";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import { TOAST_ID } from "@/lib/toast";
 
 export type roadmapInput = {
   title: string;
@@ -16,49 +17,66 @@ export default function Dashboard() {
   const [roadmaps, setRoadmaps] = useState<roadmapInput[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const toastId = "loading-roadmaps";
-    toast.loading("Loading your learning paths...", { id: toastId });
-
-    async function fetchRoadmap() {
-      try {
-        const res = await fetch("/api/roadmap");
-        const responseText = await res.json();
-        console.log(responseText.data);
-        if (responseText.data.length === 0) {
-          toast(
-            (t) => (
-              <div className="flex-center flex-col gap-2">
-                <p>No learning path yet...</p>
-                <a
-                  href="/roadmap"
-                  className="bg-primary text-background px-4 py-1 rounded-full"
-                >
-                  {" "}
-                  Create Now !{" "}
-                </a>
-              </div>
-            ),
-            { id: toastId }
-          );
-          setRoadmaps(null);
-          return;
-        }
-        console.log(responseText.data);
-
-        setRoadmaps(responseText.data);
-
-        toast.success("Roadmaps loaded!", { id: toastId });
-      } catch (error) {
-        toast.error("Failed to fetch roadmap", { id: toastId });
-        console.error("Failed to fetch roadmap");
-      } finally {
-        setLoading(false);
+  async function fetchRoadmap() {
+    try {
+      const res = await fetch("/api/roadmap");
+      const responseText = await res.json();
+      if (responseText.data.length === 0) {
+        toast(
+          (t) => (
+            <div className="flex-center flex-col gap-2">
+              <p>No learning path yet...</p>
+              <a
+                href="/roadmap"
+                className="bg-primary text-background px-4 py-1 rounded-full"
+              >
+                {" "}
+                Create Now !{" "}
+              </a>
+            </div>
+          ),
+          { id: TOAST_ID }
+        );
+        setRoadmaps(null);
+        return;
       }
+
+      setRoadmaps(responseText.data);
+
+      toast.success("Roadmaps loaded!", { id: TOAST_ID });
+    } catch (error) {
+      toast.error("Failed to fetch roadmap", { id: TOAST_ID });
+      console.error("Failed to fetch roadmap");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
+    toast.loading("Loading your learning paths...", { id: TOAST_ID });
 
     fetchRoadmap();
   }, []);
+
+  async function handleDelete(id: string) {
+    toast.loading("Deleting Roadmap ...", { id: TOAST_ID });
+
+    try {
+      await fetch(`/api/roadmap/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      toast.loading("Learning Path Succesfully Deleted !", { id: TOAST_ID });
+
+      fetchRoadmap();
+    } catch (error: any) {
+      console.error("Failed to delete learning path !", error.message);
+    }
+    console.log(id);
+  }
 
   return (
     <>
@@ -71,32 +89,89 @@ export default function Dashboard() {
           {roadmaps ? (
             <div className="grid gap-6">
               {roadmaps.map((item) => (
-                <a
-                  href={`dashboard/${item.id}`}
+                <div
                   key={item.id}
-                  className="block group"
+                  className="group relative hover:shadow-lg transition-all duration-200"
                 >
-                  <div className="bg-foreground/5 border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary">
-                    <h2 className="text-xl font-bold text-primary mb-4">
-                      {item.title}
-                    </h2>
+                  <div className="bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary h-full">
+                    {/* Card Header */}
+                    <div className="flex justify-between items-start mb-4">
+                      <Link
+                        href={`dashboard/${item.id}`}
+                        className="text-xl font-bold text-primary hover:text-secondary transition-colors pr-4"
+                      >
+                        {item.title}
+                      </Link>
 
-                    <div className="flex flex-wrap gap-2">
-                      {item.roadmap.map((week, index) => (
-                        <span
-                          key={index}
-                          className={`px-3 py-1 rounded-full text-sm  ${
-                            week.isCompleted
-                              ? "bg-green-600 text-background"
-                              : "bg-foreground/10 text-foreground"
-                          } `}
-                        >
-                          Week {index + 1}
-                        </span>
-                      ))}
+                      {/* Delete Button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDelete(item.id);
+                        }}
+                        className="text-primary hover:text-red-600 transition-colors p-1"
+                        aria-label="Delete roadmap"
+                      >
+                        🗑️
+                      </button>
                     </div>
+
+                    {/* Weeks Progress */}
+                    <Link href={`dashboard/${item.id}`} className="block">
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {item.roadmap.slice(0, 5).map((week, index) => (
+                          <span
+                            key={index}
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              week.isCompleted
+                                ? "bg-primary/10 text-primary border border-primary/20"
+                                : "bg-foreground/5 text-foreground/80 border border-foreground/10"
+                            }`}
+                          >
+                            Week {index + 1}
+                          </span>
+                        ))}
+                        {item.roadmap.length > 5 && (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-foreground/5 text-foreground/60 border border-foreground/10">
+                            +{item.roadmap.length - 5} more
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="mt-4">
+                        <div className="h-2 w-full bg-foreground/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full"
+                            style={{
+                              width: `${
+                                (item.roadmap.filter((w) => w.isCompleted)
+                                  .length /
+                                  item.roadmap.length) *
+                                100
+                              }%`,
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between text-xs text-foreground/60 mt-1">
+                          <span>
+                            {item.roadmap.filter((w) => w.isCompleted).length}{" "}
+                            of {item.roadmap.length} weeks completed
+                          </span>
+                          <span>
+                            {Math.round(
+                              (item.roadmap.filter((w) => w.isCompleted)
+                                .length /
+                                item.roadmap.length) *
+                                100
+                            )}
+                            %
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           ) : (
