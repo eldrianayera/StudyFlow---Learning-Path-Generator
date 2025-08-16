@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { log } from "console";
+import { Week } from "@/app/roadmap/page";
 
 export async function GET(
   req: NextRequest,
@@ -58,7 +59,7 @@ export async function PUT(
       );
     }
 
-    type RoadmapItem = { title: string; tasks: any[]; isCompleted: boolean };
+    type RoadmapItem = { title: string; tasks: Week[]; isCompleted: boolean };
     const currentRoadmap = current.roadmap as RoadmapItem[]; // type assertion
 
     currentRoadmap[index] = {
