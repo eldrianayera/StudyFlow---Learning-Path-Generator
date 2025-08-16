@@ -256,7 +256,7 @@ export default function Home() {
                 key={index}
                 className="bg-background border border-foreground/10 rounded-xl p-8 hover:border-primary transition-all hover:shadow-lg"
               >
-                <div className="text-primary text-4xl mb-4">"</div>
+                <div className="text-primary text-4xl mb-4">&quot;</div>
                 <p className="text-lg mb-6 italic text-foreground/90">
                   {testimonial.quote}
                 </p>
