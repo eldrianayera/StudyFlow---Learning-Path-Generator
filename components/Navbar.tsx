@@ -20,13 +20,13 @@ export default function Navbar() {
                 href="/dashboard"
                 className="text-background hover:text-foreground transition-colors"
               >
-                My Learning
+                Dashboard
               </Link>
               <Link
                 href="/roadmap"
                 className="max-md:hidden text-background hover:text-foreground transition-colors"
               >
-                Generate Roadmap
+                Start Learning
               </Link>
             </div>
 
@@ -50,13 +50,13 @@ export default function Navbar() {
                 href="/dashboard"
                 className="text-background hover:text-foreground transition-colors"
               >
-                My Learning
+                Dashboard
               </Link>
               <Link
                 href="/roadmap"
                 className="text-background hover:text-foreground transition-colors"
               >
-                Generate Roadmap
+                Start Learning
               </Link>
             </div>
 

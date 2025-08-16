@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { TOAST_ID } from "@/lib/toast";
+import Link from "next/link";
 
 export type Week = { title: string; tasks: string[]; isCompleted: boolean };
 
@@ -97,6 +98,28 @@ export default function RoadMap() {
     <div className="bg-gradient-to-b from-background/95 to-background/100 text-foreground min-h-screen p-6">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Header */}
+        <div className="mb-8">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Dashboard
+          </Link>
+        </div>
         <div className="text-center">
           <h1 className="text-3xl font-bold text-primary mb-2">
             Build Your Learning Path
