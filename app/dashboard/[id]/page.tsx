@@ -6,10 +6,14 @@ import { RoadmapInput } from "../page";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { log } from "console";
-import { Roadmap } from "@prisma/client";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
+// Fetch roadmap by ID
 async function fetchById(id: string): Promise<RoadmapInput> {
   const res = await fetch(`/api/roadmap/${id}`);
   if (!res.ok) throw new Error("Failed to fetch roadmap by ID");
@@ -17,11 +21,57 @@ async function fetchById(id: string): Promise<RoadmapInput> {
   return response.data;
 }
 
+// Update task status
+async function updateStatus({ id, index }: { id: string; index: number }) {
+  const res = await fetch(`/api/roadmap/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ index }),
+  });
+
+  if (!res.ok) throw new Error("Failed to change Status");
+}
+
+// update task status UI
+function optimisticToggle(
+  { id, index }: { id: string; index: number },
+  queryClient: QueryClient
+) {
+  queryClient.cancelQueries({ queryKey: ["roadmap", id] });
+
+  const previousRoadmap = queryClient.getQueryData<RoadmapInput>([
+    "roadmap",
+    id,
+  ]);
+
+  if (previousRoadmap) {
+    queryClient.setQueryData<RoadmapInput>(["roadmap", id], (old) => {
+      if (!old) return old;
+      const updatedRoadmap = [...old.roadmap];
+      updatedRoadmap[index] = {
+        ...updatedRoadmap[index],
+        isCompleted: !updatedRoadmap[index].isCompleted,
+      };
+      return {
+        ...old,
+        roadmap: updatedRoadmap,
+      };
+    });
+  }
+
+  return { previousRoadmap };
+}
+
+// Component Function ////////////////////////////////////////////
 export default function RoadmapDetail() {
   const params = useParams();
   const id = String(params.id);
 
   const queryClient = useQueryClient();
+
+  // fetch mutation ////////////////////////////////////////////////////
   const {
     data: roadmap,
     isLoading: fetchLoading,
@@ -46,6 +96,29 @@ export default function RoadmapDetail() {
       toast.dismiss(TOAST_ID);
     }
   }, [fetchLoading]);
+
+  // update task mutation ////////////////////////////////////////////////////
+
+  const { mutate, isPending: updatePending } = useMutation({
+    mutationFn: ({ id, index }: { id: string; index: number }) =>
+      updateStatus({ id, index }),
+    onMutate: ({ id, index }: { id: string; index: number }) =>
+      optimisticToggle({ id, index }, queryClient),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["roadmap", id] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["roadmap"] }),
+    onError: (err, variables, context) => {
+      toast.error("Failed to update task status", { id: TOAST_ID });
+      if (context?.previousRoadmap) {
+        queryClient.setQueryData(["roadmap", id], context.previousRoadmap);
+      }
+    },
+  });
+
+  const handleClick = (index: number): void => {
+    if (updatePending) return;
+    mutate({ id, index });
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -82,6 +155,7 @@ export default function RoadmapDetail() {
             <div className="space-y-8">
               {roadmap.roadmap.map((week, index) => (
                 <div
+                  onClick={() => handleClick(index)}
                   key={index}
                   className="group relative overflow-hidden bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary hover:shadow-lg cursor-pointer"
                 >
