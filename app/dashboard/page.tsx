@@ -18,7 +18,6 @@ async function fetchRoadmap(): Promise<RoadmapInput[]> {
   const res = await fetch("/api/roadmap");
   if (!res.ok) throw new Error("Failed to fetch roadmap");
   const response = await res.json();
-  console.log(response.data);
 
   return response.data;
 }
@@ -35,14 +34,19 @@ export default function Dashboard() {
     isError,
   } = useQuery<RoadmapInput[], Error>({
     queryKey: ["roadmap"],
-    queryFn: () =>
-      toast.promise(fetchRoadmap(), {
-        loading: "Loading Your learning path...",
-        success: <b>Learning Path ready !</b>,
-        error: <b>Failed to get our learning path.</b>,
-      }),
+    queryFn: fetchRoadmap,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    if (isLoading) {
+      toast.loading("Loading your learning path...", { id: TOAST_ID });
+    } else {
+      if (isError)
+        toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
+      else if (roadmaps) toast.success(<b>Loaded!</b>, { id: TOAST_ID });
+    }
+  }, [isLoading, isError, roadmaps]);
 
   async function handleDelete(id: string) {
     toast.loading("Deleting Roadmap ...", { id: TOAST_ID });

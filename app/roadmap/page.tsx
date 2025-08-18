@@ -1,65 +1,104 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { TOAST_ID } from "@/lib/toast";
 import Link from "next/link";
+import { error } from "console";
+import { useMutation } from "@tanstack/react-query";
 
 export type Week = { title: string; tasks: string[]; isCompleted: boolean };
 
+type UserForm = {
+  topic?: string;
+  level?: string;
+  duration?: string;
+};
+
+// Generate Roadmap
+async function generateRoadmap(userForm: UserForm): Promise<Week[]> {
+  // Post method to api/generate-roadmap
+  const res = await fetch("/api/generate-roadmap", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userForm),
+  });
+
+  if (!res.ok) throw new Error("Failed to generate Roadmap");
+
+  const response = await res.json();
+  console.log(response);
+
+  // Add is Completed
+  const addedIsCompleted = response.roadmap.map((week: Week) => ({
+    ...week,
+    isCompleted: false,
+  }));
+
+  return addedIsCompleted;
+}
+
+// Saving Roadmap
+async function saveRoadmap({
+  roadmap,
+  title,
+}: {
+  roadmap: Week[];
+  title: string;
+}): Promise<string> {
+  const res = await fetch("api/roadmap", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ roadmap, title }),
+  });
+
+  if (!res.ok) throw new Error("Failed to Save roadmap !");
+
+  const response = await res.json();
+  const id = response.id;
+
+  return id;
+}
+
 export default function RoadMap() {
-  const [topic, setTopic] = useState<string>("");
-  const [level, setLevel] = useState<string>("beginner");
-  const [duration, setDuration] = useState<number>(3);
-  const [roadmap, setRoadmap] = useState<Week[] | null>(null);
+  const [userForm, setUserForm] = useState<UserForm>({
+    topic: "",
+    level: "Beginner",
+    duration: "3",
+  });
   const [title, setTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
-
   const route = useRouter();
+
+  const {
+    mutate: generateMutate,
+    isPending: generatePending,
+    isError: generateError,
+    data: roadmap,
+  } = useMutation({
+    mutationFn: (userForm: UserForm) => generateRoadmap(userForm),
+    onSuccess: () => console.log("success "),
+    onError: () => toast.error("Failed to generate roadmap"),
+  });
+
+  const {
+    mutate: saveMutate,
+    isPending: savePending,
+    isError: saveError,
+  } = useMutation({
+    mutationFn: ({ roadmap, title }: { roadmap: Week[]; title: string }) =>
+      saveRoadmap({ roadmap, title }),
+    onSuccess: (id) => route.push(`/dashboard/${id}`),
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!topic.trim()) {
-      alert("Please enter a topic.");
-      return;
-    }
-
-    setLoading(true);
-
-    setRoadmap(null);
-
-    try {
-      const res = await fetch("/api/generate-roadmap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic, level, duration }),
-      });
-
-      const data = await res.json();
-
-      toast.success("Learning Path generated !", { id: TOAST_ID });
-      if (!res.ok) {
-        console.error(data.error);
-        setRoadmap([]);
-      } else {
-        const addedIsCompleted = data.roadmap.map((week: Week) => ({
-          ...week,
-          isCompleted: false,
-        }));
-
-        setRoadmap(addedIsCompleted);
-      }
-    } catch (err) {
-      toast.error("Failed to generate learning path !", { id: TOAST_ID });
-
-      console.error(err);
-      setRoadmap([]);
-    } finally {
-      setLoading(false);
-    }
+    generateMutate(userForm);
   };
 
   function handleConfirm() {
@@ -71,28 +110,23 @@ export default function RoadMap() {
       toast.error("Please Input Title");
       return;
     }
-    try {
-      const savingId = toast.loading("Saving...");
 
-      const res = await fetch("/api/roadmap", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roadmap, title }),
-      });
-
-      const response = await res.json();
-      const id = response.id;
-
-      toast.success("Learning Path Saved !", { id: savingId });
-
-      route.push(`/dashboard/${id}`);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (error) {
-      return console.error("Fail to Save Roadmap");
+    if (!roadmap) {
+      toast.error("No roadmap to save!");
+      return;
     }
+    saveMutate({ roadmap, title });
   }
+
+  useEffect(() => {
+    if (savePending) {
+      toast.loading("Saving your learning path...", { id: TOAST_ID });
+    } else {
+      if (saveError)
+        toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
+      else toast.success(<b> Saved ! </b>, { id: TOAST_ID });
+    }
+  }, [savePending, saveError]);
 
   return (
     <div className="bg-gradient-to-b from-background/95 to-background/100 text-foreground min-h-screen p-6">
@@ -141,8 +175,13 @@ export default function RoadMap() {
             <input
               type="text"
               placeholder="Enter a topic (e.g., Advanced JavaScript, Data Science...)"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              value={userForm!.topic}
+              onChange={(e) =>
+                setUserForm((prev) => ({
+                  ...prev,
+                  topic: e.target.value,
+                }))
+              }
               className="w-full p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
@@ -152,8 +191,13 @@ export default function RoadMap() {
             <div className="space-y-2">
               <label className="font-medium">Current skill level</label>
               <select
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
+                value={userForm!.level}
+                onChange={(e) =>
+                  setUserForm((prev) => ({
+                    ...prev,
+                    level: e.target.value,
+                  }))
+                }
                 className="w-full p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="Beginner">Beginner</option>
@@ -166,11 +210,16 @@ export default function RoadMap() {
               <label className="font-medium">Learning timeline</label>
               <div className="flex items-center gap-3">
                 <select
-                  value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
+                  value={userForm!.duration}
+                  onChange={(e) =>
+                    setUserForm((prev) => ({
+                      ...prev,
+                      duration: e.target.value,
+                    }))
+                  }
                   className="flex-1 p-3 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  {[1, 2, 3, 4, 5, 6].map((num) => (
+                  {["1", "2", "3", "4", "5", "6"].map((num) => (
                     <option key={num} value={num}>
                       {num}
                     </option>
@@ -184,9 +233,9 @@ export default function RoadMap() {
           <button
             type="submit"
             className="w-full py-3 px-6 rounded-lg bg-primary text-background font-bold hover:bg-secondary transition-colors disabled:opacity-50"
-            disabled={loading}
+            disabled={generatePending}
           >
-            {loading ? "Creating..." : "Generate Learning Path"}
+            {generatePending ? "Creating..." : "Generate Learning Path"}
           </button>
         </form>
 
@@ -198,7 +247,7 @@ export default function RoadMap() {
                 className="w-full py-3 px-6 rounded-lg bg-green-600 text-background font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
                 onClick={handleConfirm}
               >
-                {loading ? "Saving Your Path..." : "Save"}
+                {savePending ? "Saving Your Path..." : "Save"}
               </button>
               {roadmap.map((week, index) => (
                 <div
@@ -260,8 +309,9 @@ export default function RoadMap() {
                 <button
                   onClick={handleSave}
                   className="px-4 py-2 rounded-lg bg-primary text-background hover:bg-secondary"
+                  disabled={savePending}
                 >
-                  Confirm
+                  {savePending ? "Saving..." : "Confirm"}
                 </button>
               </div>
             </div>
