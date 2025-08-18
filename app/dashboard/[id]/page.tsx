@@ -6,63 +6,46 @@ import { RoadmapInput } from "../page";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { log } from "console";
+import { Roadmap } from "@prisma/client";
+
+async function fetchById(id: string): Promise<RoadmapInput> {
+  const res = await fetch(`/api/roadmap/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch roadmap by ID");
+  const response = await res.json();
+  return response.data;
+}
 
 export default function RoadmapDetail() {
-  const [roadmap, setRoadmap] = useState<RoadmapInput | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const params = useParams();
   const id = String(params.id);
 
-  async function fetchRoadmap(id: string) {
-    toast.loading("Loading your learning path...", { id: TOAST_ID });
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/roadmap/${id}`);
-      const responseText = await res.json();
-      toast.dismiss(TOAST_ID);
-      setRoadmap(responseText.data);
-    } catch (error) {
-      toast.error("Learning path ready !", { id: TOAST_ID });
-      console.error("Failed to fetch learning path");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const queryClient = useQueryClient();
+  const {
+    data: roadmap,
+    isLoading: fetchLoading,
+    isError: fetchError,
+  } = useQuery({
+    queryKey: ["roadmap", id],
+    queryFn: () => fetchById(id),
+    initialData: () => {
+      const allRoadmaps = queryClient.getQueryData<RoadmapInput[]>(["roadmap"]);
+      return allRoadmaps?.find((item) => item.id === id);
+    },
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
-    fetchRoadmap(id);
-  }, [id]);
-
-  async function handleClick(index: number) {
-    toast.loading("Changing Task Status...", { id: TOAST_ID });
-    try {
-      await fetch(`/api/roadmap/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ index }),
-      });
-
-      fetchRoadmap(id);
-      toast.success("Task Status Changed !", { id: TOAST_ID });
-    } catch (error: unknown) {
-      toast.error("Task Status Change Failed !", { id: TOAST_ID });
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-      console.error("Task Status Change Failed  : Unknown error");
+    console.log("useEffect Trigerred");
+    if (fetchLoading) {
+      toast.loading("Loading Your Learning Path...", { id: TOAST_ID });
+    } else if (fetchError) {
+      toast.error("Failed to get learning path", { id: TOAST_ID });
+    } else {
+      toast.dismiss(TOAST_ID);
     }
-  }
-
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-foreground text-lg">
-          Loading roadmap...
-        </div>
-      </div>
-    );
+  }, [fetchLoading]);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -100,7 +83,6 @@ export default function RoadmapDetail() {
               {roadmap.roadmap.map((week, index) => (
                 <div
                   key={index}
-                  onClick={() => handleClick(index)}
                   className="group relative overflow-hidden bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary hover:shadow-lg cursor-pointer"
                 >
                   {/* Week header with status indicator */}
