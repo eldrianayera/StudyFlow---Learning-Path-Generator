@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import toast, { ToastBar } from "react-hot-toast";
 import { TOAST_ID } from "@/lib/toast";
 import Link from "next/link";
-import { error } from "console";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export type Week = { title: string; tasks: string[]; isCompleted: boolean };
 
@@ -71,31 +70,45 @@ export default function RoadMap() {
     level: "Beginner",
     duration: "3",
   });
-  const [title, setTitle] = useState<string>("");
+
+  const titleRef = useRef<HTMLInputElement>(null);
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   const route = useRouter();
 
+  const queryClient = useQueryClient();
+
+  // generate roadmap mutation
   const {
     mutate: generateMutate,
     isPending: generatePending,
-    isError: generateError,
     data: roadmap,
-  } = useMutation({
+  } = useMutation<Week[], unknown, UserForm>({
     mutationFn: (userForm: UserForm) => generateRoadmap(userForm),
-    onSuccess: () => console.log("success "),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+    },
     onError: () => toast.error("Failed to generate roadmap"),
   });
 
-  const {
-    mutate: saveMutate,
-    isPending: savePending,
-    isError: saveError,
-  } = useMutation({
+  // saving roadmap mutation
+  const { mutate: saveMutate, isPending: savePending } = useMutation<
+    string,
+    unknown,
+    { roadmap: Week[]; title: string }
+  >({
     mutationFn: ({ roadmap, title }: { roadmap: Week[]; title: string }) =>
       saveRoadmap({ roadmap, title }),
-    onSuccess: (id) => route.push(`/dashboard/${id}`),
+    onSuccess: (id) => {
+      setIsModalOpen(false);
+      if (titleRef.current) titleRef.current.value = "";
+      route.push(`/dashboard/${id}`);
+    },
+    onError: () => toast.error("Failed to save roadmap"),
   });
 
+  // handle submit generate roadmap
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     generateMutate(userForm);
@@ -105,7 +118,10 @@ export default function RoadMap() {
     setIsModalOpen(true);
   }
 
+  // handle save roadmap
   async function handleSave() {
+    const title = titleRef.current?.value;
+
     if (!title) {
       toast.error("Please Input Title");
       return;
@@ -117,16 +133,6 @@ export default function RoadMap() {
     }
     saveMutate({ roadmap, title });
   }
-
-  useEffect(() => {
-    if (savePending) {
-      toast.loading("Saving your learning path...", { id: TOAST_ID });
-    } else {
-      if (saveError)
-        toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
-      else toast.success(<b> Saved ! </b>, { id: TOAST_ID });
-    }
-  }, [savePending, saveError]);
 
   return (
     <div className="bg-gradient-to-b from-background/95 to-background/100 text-foreground min-h-screen p-6">
@@ -293,8 +299,7 @@ export default function RoadMap() {
               </h2>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                ref={titleRef}
                 placeholder="Roadmap title"
                 className="w-full p-3 mb-6 rounded-lg border border-foreground/20 bg-background focus:ring-2 focus:ring-primary"
                 required
