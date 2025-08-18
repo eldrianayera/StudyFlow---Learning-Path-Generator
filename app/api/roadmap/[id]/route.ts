@@ -19,7 +19,7 @@ export async function GET(
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.log("error");
+    console.error(error);
 
     return NextResponse.json({ error: `Internal Error ` }, { status: 500 });
   }
@@ -126,7 +126,7 @@ export async function PUT(
 
     return NextResponse.json({ message: "Updated Task Status Success" });
   } catch (error) {
-    console.log("error");
+    console.error(error);
 
     return NextResponse.json({ error: `Internal Error ` }, { status: 500 });
   }

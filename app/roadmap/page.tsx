@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import toast, { ToastBar } from "react-hot-toast";
-import { TOAST_ID } from "@/lib/toast";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -83,6 +82,7 @@ export default function RoadMap() {
   const {
     mutate: generateMutate,
     isPending: generatePending,
+    isError: generateError,
     data: roadmap,
   } = useMutation<Week[], unknown, UserForm>({
     mutationFn: (userForm: UserForm) => generateRoadmap(userForm),

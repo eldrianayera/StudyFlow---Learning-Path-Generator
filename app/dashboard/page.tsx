@@ -5,13 +5,7 @@ import { Week } from "../roadmap/page";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  UseQueryResult,
-} from "@tanstack/react-query";
-import { error } from "console";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type RoadmapInput = {
   title: string;
@@ -93,7 +87,7 @@ export default function Dashboard() {
       if (deleteError)
         toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
     }
-  }, [fetchLoading, fetchError]);
+  }, [deletePending, deleteError]);
 
   async function handleDelete(id: string) {
     mutate(id);

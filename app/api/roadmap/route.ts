@@ -1,7 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { log } from "console";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -27,6 +26,8 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       { error: "Failed to save roadmap" },
       { status: 500 }
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const user = await currentUser();
 
   if (!user) {

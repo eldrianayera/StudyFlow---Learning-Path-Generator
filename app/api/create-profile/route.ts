@@ -1,8 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     // User is not created on Clerk
     const clerkUser = await currentUser();
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
 
     //
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error." },
       { status: 500 }
