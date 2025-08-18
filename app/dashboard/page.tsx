@@ -5,7 +5,13 @@ import { Week } from "../roadmap/page";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
+import { error } from "console";
 
 export type RoadmapInput = {
   title: string;
@@ -22,51 +28,75 @@ async function fetchRoadmap(): Promise<RoadmapInput[]> {
   return response.data;
 }
 
+async function deleteRoadmap(id: string) {
+  const res = await fetch(`/api/roadmap/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "appication/json",
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to delete a roadmap");
+
+  const response = await res.json();
+
+  return response;
+}
+
 export default function Dashboard() {
   const [confirmDelete, setConfirmDelete] = useState<{
     id: string;
     title: string;
   } | null>(null);
 
+  const queryClient = useQueryClient();
+
+  // Fetch Mutation
   const {
     data: roadmaps,
-    isLoading,
-    isError,
+    isLoading: fetchLoading,
+    isError: fetchError,
   } = useQuery<RoadmapInput[], Error>({
     queryKey: ["roadmap"],
     queryFn: fetchRoadmap,
     staleTime: Infinity,
   });
 
+  // Delete Mutation
+  const {
+    mutate,
+    isPending: deletePending,
+    isError: deleteError,
+  } = useMutation({
+    mutationFn: (id: string) => deleteRoadmap(id),
+    onSuccess: () => {
+      toast.success(<b>Learnings path deleted.</b>, { id: TOAST_ID });
+      setConfirmDelete(null);
+      queryClient.invalidateQueries({ queryKey: ["roadmap"] });
+    },
+  });
+
   useEffect(() => {
-    if (isLoading) {
+    if (fetchLoading) {
       toast.loading("Loading your learning path...", { id: TOAST_ID });
     } else {
-      if (isError)
+      if (fetchError)
         toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
-      else if (roadmaps) toast.success(<b>Loaded!</b>, { id: TOAST_ID });
+      else if (roadmaps) toast.dismiss(TOAST_ID);
     }
-  }, [isLoading, isError, roadmaps]);
+  }, [fetchLoading, fetchError, roadmaps]);
+
+  useEffect(() => {
+    if (deletePending) {
+      toast.loading("Deleting learning path...", { id: TOAST_ID });
+    } else {
+      if (deleteError)
+        toast.error(<b>Failed to get your learning path.</b>, { id: TOAST_ID });
+    }
+  }, [fetchLoading, fetchError]);
 
   async function handleDelete(id: string) {
-    toast.loading("Deleting Roadmap ...", { id: TOAST_ID });
-
-    try {
-      await fetch(`/api/roadmap/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      fetchRoadmap();
-      toast.success("Learning Path Succesfully Deleted !", { id: TOAST_ID });
-    } catch (error) {
-      toast.error("Failed to delete learning path", { id: TOAST_ID });
-      console.error("Failed to delete learning path !");
-    } finally {
-      setConfirmDelete(null);
-    }
+    mutate(id);
   }
 
   return (
