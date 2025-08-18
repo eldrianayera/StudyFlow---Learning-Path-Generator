@@ -2,13 +2,13 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { roadmapInput } from "../page";
+import { RoadmapInput } from "../page";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
 
 export default function RoadmapDetail() {
-  const [roadmap, setRoadmap] = useState<roadmapInput | null>(null);
+  const [roadmap, setRoadmap] = useState<RoadmapInput | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const params = useParams();
   const id = String(params.id);

@@ -5,48 +5,44 @@ import { Week } from "../roadmap/page";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
-export type roadmapInput = {
+export type RoadmapInput = {
   title: string;
   roadmap: Week[];
   id: string;
   userClerkId: string;
 };
 
-export default function Dashboard() {
-  const [roadmaps, setRoadmaps] = useState<roadmapInput[] | null>(null);
+async function fetchRoadmap(): Promise<RoadmapInput[]> {
+  const res = await fetch("/api/roadmap");
+  if (!res.ok) throw new Error("Failed to fetch roadmap");
+  const response = await res.json();
+  console.log(response.data);
 
+  return response.data;
+}
+
+export default function Dashboard() {
   const [confirmDelete, setConfirmDelete] = useState<{
     id: string;
     title: string;
   } | null>(null);
 
-  const [loading, setLoading] = useState<boolean>(true);
-
-  async function fetchRoadmap() {
-    try {
-      const res = await fetch("/api/roadmap");
-      const responseText = await res.json();
-      if (responseText.data.length === 0) {
-        setRoadmaps(null);
-        toast.dismiss(TOAST_ID);
-        return;
-      }
-
-      setRoadmaps(responseText.data);
-      toast.success("Roadmaps loaded!", { id: TOAST_ID });
-    } catch (error) {
-      toast.error("Failed to fetch roadmap", { id: TOAST_ID });
-      console.error("Failed to fetch roadmap");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    toast.loading("Loading your learning paths...", { id: TOAST_ID });
-    fetchRoadmap();
-  }, []);
+  const {
+    data: roadmaps,
+    isLoading,
+    isError,
+  } = useQuery<RoadmapInput[], Error>({
+    queryKey: ["roadmap"],
+    queryFn: () =>
+      toast.promise(fetchRoadmap(), {
+        loading: "Loading Your learning path...",
+        success: <b>Learning Path ready !</b>,
+        error: <b>Failed to get our learning path.</b>,
+      }),
+    staleTime: Infinity,
+  });
 
   async function handleDelete(id: string) {
     toast.loading("Deleting Roadmap ...", { id: TOAST_ID });
