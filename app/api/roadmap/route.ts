@@ -47,6 +47,9 @@ export async function GET() {
   try {
     const data = await prisma.roadmap.findMany({
       where: { userClerkId: user.id },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json({ data });
