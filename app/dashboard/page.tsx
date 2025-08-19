@@ -1,5 +1,5 @@
 import FloatingPlusIconButton from "@/components/FloatingPlusIconButton";
-import RoadmapCard from "@/components/RoadmapCard";
+import DashboardComponents from "@/components/DashboardComponents";
 
 export default function Dashboard() {
   return (
@@ -8,7 +8,7 @@ export default function Dashboard() {
         <div className="relative mb-10">
           <h1 className="text-3xl font-bold">Your Learning Paths</h1>
           <FloatingPlusIconButton />
-          <RoadmapCard />
+          <DashboardComponents />
         </div>
       </div>
     </div>

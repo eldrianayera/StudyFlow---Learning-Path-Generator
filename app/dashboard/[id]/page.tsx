@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { RoadmapInput } from "@/components/RoadmapCard";
+import { RoadmapInput } from "@/components/DashboardComponents";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
