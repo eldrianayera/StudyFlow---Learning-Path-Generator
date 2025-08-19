@@ -6,12 +6,22 @@ import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
+function formatDate(date: string | Date) {
+  const d = dayjs(date);
+  return `${d.fromNow()} • ${d.format("MMM D, YYYY h:mm A")}`;
+}
 
 export type RoadmapInput = {
   title: string;
   roadmap: Week[];
   id: string;
   userClerkId: string;
+  createdAt: Date;
 };
 
 async function fetchRoadmap(): Promise<RoadmapInput[]> {
@@ -139,13 +149,19 @@ export default function Dashboard() {
                 >
                   <div className="bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary h-full">
                     {/* Card Header */}
-                    <div className="flex justify-between items-start mb-4">
-                      <Link
-                        href={`dashboard/${item.id}`}
-                        className="text-xl font-bold text-primary hover:text-secondary transition-colors pr-4"
-                      >
-                        {item.title}
-                      </Link>
+                    <div className="flex justify-between items-center mb-4 border-b border-foreground/10 pb-2">
+                      {/* Left Section: Title + Date */}
+                      <div className="flex flex-col">
+                        <Link
+                          href={`dashboard/${item.id}`}
+                          className="text-lg font-semibold text-primary hover:text-secondary transition-colors"
+                        >
+                          {item.title}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(item.createdAt)}
+                        </p>
+                      </div>
 
                       {/* Delete Button */}
                       <button
@@ -153,13 +169,13 @@ export default function Dashboard() {
                           e.preventDefault();
                           setConfirmDelete({ id: item.id, title: item.title });
                         }}
-                        className="bg-primary text-background hover:bg-red-600 rounded-lg transition-colors duration-300 p-1"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
                         aria-label="Delete roadmap"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
+                          width="16"
+                          height="16"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"

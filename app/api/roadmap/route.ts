@@ -51,6 +51,7 @@ export async function GET() {
         createdAt: "desc",
       },
     });
+    console.log("data sent bu BE :   ", data);
 
     return NextResponse.json({ data });
   } catch (error) {
