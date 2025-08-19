@@ -28,7 +28,6 @@ async function fetchRoadmap(): Promise<RoadmapInput[]> {
   const res = await fetch("/api/roadmap");
   if (!res.ok) throw new Error("Failed to fetch roadmap");
   const response = await res.json();
-  console.log(response.data);
 
   return response.data;
 }
@@ -104,15 +103,45 @@ export default function Dashboard() {
     mutate(id);
   }
 
+  // createdAt order change
+  const handleOrderChange = () => {
+    queryClient.setQueryData<RoadmapInput[]>(["roadmap"], (old) => {
+      if (!old) return old;
+      return [...old].reverse();
+    });
+  };
+
   return (
     <>
       <div className="min-h-screen bg-background p-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-8">
-            Your Learning Paths
-          </h1>
-
-          {roadmaps ? (
+          <div className="relative mb-10">
+            <h1 className="text-3xl font-bold">Your Learning Paths</h1>
+            {roadmaps?.length !== 0 && (
+              <button
+                onClick={handleOrderChange}
+                className="absolute right-3 bg-primary/60 p-2 text-background rounded-xl"
+              >
+                {" "}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="1em"
+                  height="1em"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m3 16l4 4l4-4m-4 4V4m14 4l-4-4l-4 4m4-4v16"
+                  ></path>
+                </svg>
+              </button>
+            )}
+          </div>
+          {roadmaps?.length !== 0 ? (
             <div className="grid gap-6">
               {/* Floating Action Button */}
               <div className="fixed bottom-6 right-6 z-40">
@@ -136,7 +165,7 @@ export default function Dashboard() {
                 </Link>
               </div>
 
-              {roadmaps.map((item) => (
+              {roadmaps?.map((item) => (
                 <div
                   key={item.id}
                   className="group relative hover:shadow-lg transition-all duration-200"
