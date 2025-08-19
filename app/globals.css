@@ -20,11 +20,7 @@
       58,
       183
     ); /* Deep purple (modern, trustworthy, creative) */
-    --secondary: rgb(
-      255,
-      152,
-      0
-    ); /* Vibrant orange (contrasts nicely with purple) */
+    --secondary: rgb(193, 134, 211); /* Vibrant orange (contrasts nicely with purple) */
   }
 }
 

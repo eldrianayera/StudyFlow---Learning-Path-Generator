@@ -28,6 +28,7 @@ async function fetchRoadmap(): Promise<RoadmapInput[]> {
   const res = await fetch("/api/roadmap");
   if (!res.ok) throw new Error("Failed to fetch roadmap");
   const response = await res.json();
+  console.log(response.data);
 
   return response.data;
 }
@@ -113,8 +114,8 @@ export default function Dashboard() {
 
           {roadmaps ? (
             <div className="grid gap-6">
-              {/* Mobile Floating Action Button (only shows on mobile) */}
-              <div className="md:hidden fixed bottom-6 right-6 z-40">
+              {/* Floating Action Button */}
+              <div className="fixed bottom-6 right-6 z-40">
                 <Link href="/roadmap" className="rounded-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -135,13 +136,6 @@ export default function Dashboard() {
                 </Link>
               </div>
 
-              {/* Regular Create Button (shows on desktop) */}
-              <Link
-                href="/roadmap"
-                className="hidden md:block w-full text-background text-center bg-primary rounded-lg p-3 hover:bg-secondary transition-colors"
-              >
-                Create Learning Path
-              </Link>
               {roadmaps.map((item) => (
                 <div
                   key={item.id}
@@ -149,17 +143,17 @@ export default function Dashboard() {
                 >
                   <div className="bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary h-full">
                     {/* Card Header */}
-                    <div className="flex justify-between items-center mb-4 border-b border-foreground/10 pb-2">
+                    <Link
+                      href={`dashboard/${item.id}`}
+                      className="flex justify-between items-center mb-4 border-b border-foreground/10 pb-2"
+                    >
                       {/* Left Section: Title + Date */}
                       <div className="flex flex-col">
-                        <Link
-                          href={`dashboard/${item.id}`}
-                          className="text-lg font-semibold text-primary hover:text-secondary transition-colors"
-                        >
+                        <div className="text-lg font-semibold text-primary hover:text-secondary transition-colors">
                           {item.title}
-                        </Link>
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                          {formatDate(item.createdAt)}
+                          started {formatDate(item.createdAt)}
                         </p>
                       </div>
 
@@ -187,7 +181,7 @@ export default function Dashboard() {
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                         </svg>
                       </button>
-                    </div>
+                    </Link>
 
                     {/* Weeks Progress */}
                     <Link href={`dashboard/${item.id}`} className="block">

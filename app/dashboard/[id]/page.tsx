@@ -157,7 +157,7 @@ export default function RoadmapDetail() {
                 <div
                   onClick={() => handleClick(index)}
                   key={index}
-                  className="group relative overflow-hidden bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary hover:shadow-lg cursor-pointer"
+                  className="group relative overflow-hidden bg-background border border-foreground/10 rounded-xl p-6 transition-all hover:border-primary hover:shadow-lg hover:bg-secondary/10 cursor-pointer"
                 >
                   {/* Week header with status indicator */}
                   <div className="flex items-center justify-between mb-5">
