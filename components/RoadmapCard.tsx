@@ -117,7 +117,7 @@ export default function RoadmapCard() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative pt-1">
       {/* Change order button */}
       {roadmaps && roadmaps.length > 0 && (
         <ChangeOrderButton onClick={handleOrderChange} />
