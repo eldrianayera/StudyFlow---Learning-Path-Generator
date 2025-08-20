@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function FloatingPlusIconButton() {
   return (
     <div className="fixed bottom-6 right-6 z-40">
-      <Link href="/roadmap" className="rounded-full">
+      <Link href="/generate-roadmap" className="rounded-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="56"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Week } from "@/app/roadmap/page";
+import { Week } from "@/app/generate-roadmap/page";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { TOAST_ID } from "@/lib/toast";

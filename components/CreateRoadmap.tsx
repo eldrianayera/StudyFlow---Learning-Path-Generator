@@ -4,7 +4,7 @@ export default function CreateRoadmap() {
   return (
     <div className="flex flex-col items-center justify-center gap-6 p-12 rounded-xl border-2 border-dashed border-foreground/20 bg-foreground/5 text-center hover:border-primary/30 transition-all duration-300">
       <a
-        href="/roadmap"
+        href="/generate-roadmap"
         className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center"
       >
         <svg
@@ -34,7 +34,7 @@ export default function CreateRoadmap() {
 
       <div className="flex gap-4">
         <Link
-          href="/roadmap"
+          href="/generate-roadmap"
           className="px-6 py-3 rounded-lg bg-primary text-background font-medium hover:bg-secondary transition-colors shadow-sm hover:shadow-md"
         >
           Create Now

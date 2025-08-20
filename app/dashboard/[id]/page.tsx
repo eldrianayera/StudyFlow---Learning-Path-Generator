@@ -12,6 +12,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import BackToButton from "@/components/BackToButton";
 
 // Fetch roadmap by ID
 async function fetchById(id: string): Promise<RoadmapInput> {
@@ -123,29 +124,7 @@ export default function RoadmapDetail() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="sticky top-4 z-50 mb-8">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 bg-background/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-foreground/10 text-primary hover:text-secondary transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Dashboard
-          </Link>
-        </div>
-
+        <BackToButton />
         {roadmap ? (
           <section className="space-y-8">
             <h1 className="text-4xl font-bold text-foreground text-center mb-6">

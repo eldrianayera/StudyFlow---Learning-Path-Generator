@@ -40,7 +40,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/roadmap"
+              href="/generate-roadmap"
               className="bg-primary text-background px-8 py-4 rounded-lg text-lg font-medium hover:bg-secondary transition-all transform hover:scale-105 shadow-lg hover:shadow-primary/20"
             >
               Start Learning Journey →
